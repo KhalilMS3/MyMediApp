@@ -19,7 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.compose.errorLight
 import com.example.compose.primaryLight
-import com.example.mymediapp.viewmodel.ReminderViewModel
+import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)

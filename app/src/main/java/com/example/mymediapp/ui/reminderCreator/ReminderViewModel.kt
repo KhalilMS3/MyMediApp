@@ -1,4 +1,4 @@
-package com.example.mymediapp.viewmodel
+package com.example.mymediapp.ui.reminderCreator
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
