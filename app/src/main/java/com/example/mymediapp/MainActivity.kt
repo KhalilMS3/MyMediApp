@@ -27,8 +27,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.compose.secondaryLight
 import com.example.compose.tertiaryContainerLight
-import com.example.mymediapp.ui.screens.HomeScreen
+import com.example.mymediapp.ui.screens.ReminderScreen
 import com.example.mymediapp.ui.screens.calendarScreen
+import com.example.mymediapp.ui.screens.homeScreen
 import com.example.mymediapp.ui.screens.loginScreen
 import com.example.mymediapp.ui.screens.myDietScreen
 import com.example.mymediapp.ui.screens.myMedicationsScreen
@@ -83,7 +84,7 @@ fun MyApp() {
         ) { padding ->
             // Her definerer vi NavHost som håndterer navigasjonen mellom skjermene
             NavHost(navController = navController, startDestination = "home", Modifier.padding(padding)) {
-                composable("home") { HomeScreen(navController) }
+                composable("home") { homeScreen(navController) }
                 composable("reminder") { ReminderScreen(navController) }
                 composable("medications") { myMedicationsScreen(navController) }
                 composable("diet") { myDietScreen(navController) }
@@ -95,10 +96,6 @@ fun MyApp() {
             }
         }
     }
-}
-@Composable
-fun screenContent (modifier: Modifier = Modifier){
-
 }
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
@@ -337,3 +334,5 @@ fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }
+
+

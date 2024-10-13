@@ -1,5 +1,6 @@
-package com.example.mymediapp
+package com.example.mymediapp.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,15 +18,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.compose.errorLight
+import com.example.compose.onPrimaryContainerDark
+import com.example.compose.onPrimaryContainerLight
 import com.example.compose.primaryLight
+import com.example.mymediapp.model.Reminder
+import com.example.mymediapp.model.Time
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderScreen(navController: NavController) {
-    val viewModel: ReminderViewModel = viewModel()
+fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = viewModel()) {
     var searchText by remember { mutableStateOf("") }
     var numberOfDoses by remember { mutableStateOf("") }
     val medicines by viewModel.medicineResults.observeAsState(initial = emptyList())
@@ -33,9 +39,18 @@ fun ReminderScreen(navController: NavController) {
     var isMedicineSelected by remember { mutableStateOf(false) }
     var selectedMedicine by remember { mutableStateOf("") }
     var timeBetweenDoses by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+
+    // Function to parse time from String to Time object
+    fun parseStartTime(timeString: String): Time {
+        val parts = timeString.split(":")
+        val hours = parts[0].toIntOrNull() ?: 0
+        val minutes = parts.getOrNull(1)?.toIntOrNull() ?: 0
+        return Time(hours, minutes)
+    }
 
     val calendar = Calendar.getInstance()
     val context = LocalContext.current
@@ -60,6 +75,17 @@ fun ReminderScreen(navController: NavController) {
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    // TimePickerDialog for Start Time
+    val startTimePicker = android.app.TimePickerDialog(
+        context,
+        { _, hourOfDay, minute ->
+            startTime = String.format("%02d:%02d", hourOfDay, minute)
+        },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
     )
 
     Scaffold(
@@ -92,8 +118,7 @@ fun ReminderScreen(navController: NavController) {
                         }
                     },
                     label = { Text("Search for medicine") },
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -139,12 +164,12 @@ fun ReminderScreen(navController: NavController) {
                         TextField(
                             value = timeBetweenDoses,
                             onValueChange = { input ->
-                                // Vi begrenser input til maks 8 tegn (to tall for timer, to tall for minutter)
+                                // Limit input to max 8 characters (two for hours, two for minutes)
                                 if (input.length <= 8) {
-                                    // Tillater kun tall, og holder "h" og "m" uendret
+                                    // Allow only numbers, and leave "h" and "m" unchanged
                                     val sanitizedInput = input.replace(Regex("[^0-9]"), "")
-                                    val hours = sanitizedInput.take(2).padStart(2, '0') // Første 2 tegn er timer
-                                    val minutes = sanitizedInput.drop(2).take(2).padStart(2, '0') // Neste 2 tegn er minutter
+                                    val hours = sanitizedInput.take(2).padStart(2, '0') // First 2 characters are hours
+                                    val minutes = sanitizedInput.drop(2).take(2).padStart(2, '0') // Next 2 characters are minutes
 
                                     timeBetweenDoses = "${hours}h.${minutes}m"
                                 }
@@ -153,7 +178,6 @@ fun ReminderScreen(navController: NavController) {
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                         )
                     }
-
                 }
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -163,7 +187,7 @@ fun ReminderScreen(navController: NavController) {
                             value = startDate,
                             onValueChange = { },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                            readOnly = true, // Bare for å åpne DatePicker ved klikk
+                            readOnly = true, // Open DatePicker on click
                             leadingIcon = {
                                 Icon(Icons.Default.DateRange, contentDescription = "Start Date", modifier = Modifier.clickable { startDatePicker.show() })
                             }
@@ -171,12 +195,12 @@ fun ReminderScreen(navController: NavController) {
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Slutt date", fontSize = 16.sp)
+                        Text("End date", fontSize = 16.sp)
                         TextField(
                             value = endDate,
                             onValueChange = { },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                            readOnly = true, // Bare for å åpne DatePicker ved klikk
+                            readOnly = true, // Open DatePicker on click
                             leadingIcon = {
                                 Icon(Icons.Default.DateRange, contentDescription = "End Date", modifier = Modifier.clickable { endDatePicker.show() })
                             }
@@ -185,26 +209,91 @@ fun ReminderScreen(navController: NavController) {
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // Start Time Field
+                Text("Start Time", fontSize = 16.sp)
+                TextField(
+                    value = startTime,
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    readOnly = true, // Open TimePicker on click
+                    leadingIcon = {
+                        Icon(Icons.Default.DateRange, contentDescription = "Start Time", modifier = Modifier.clickable { startTimePicker.show() })
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text("Notes", fontSize = 16.sp)
                 TextField(
                     value = notes,
-                    onValueChange = { notes= it },
+                    onValueChange = { notes = it },
                     modifier = Modifier.fillMaxWidth().height(120.dp).padding(vertical = 8.dp),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Button(
-                        onClick = { /* TODO: Legg til funksjonalitet */ },
-                        modifier = Modifier.weight(1f).padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryLight)
+                        onClick = {
+                            // Validate user input
+                            if (selectedMedicine.isEmpty()) {
+                                Toast.makeText(context, "Vennligst velg en medisin", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                            if (numberOfDoses.isEmpty()) {
+                                Toast.makeText(context, "Vennligst oppgi antall doser", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                            if (timeBetweenDoses.isEmpty()) {
+                                Toast.makeText(context, "Vennligst oppgi tid mellom doser", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                            if (startDate.isEmpty()) {
+                                Toast.makeText(context, "Vennligst velg startdato", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                            if (endDate.isEmpty()) {
+                                Toast.makeText(context, "Vennligst velg sluttdato", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+                            // Convert timeBetweenDoses to Int
+                            val timeBetweenDosesInt = timeBetweenDoses.toIntOrNull() ?: 0 // Default to 0 if invalid input
+                            // Convert String dates to Date objects
+                            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                            val startDateParsed: Date = dateFormat.parse(startDate) ?: Date()
+                            val endDateParsed: Date = dateFormat.parse(endDate) ?: Date()
+                            // Convert String startTime to Time object
+                            val startTimeParsed: Time = parseStartTime(startTime)
+                            val doses = numberOfDoses.toIntOrNull() ?: 0
+                            val (hoursBetween, minutesBetween) = viewModel.parseTimeBetweenDoses(timeBetweenDoses)
+
+                            val reminder = Reminder(
+                                medicineName = selectedMedicine,
+                                numberOfDoses = doses,
+                                timeBetweenDoses = timeBetweenDosesInt,
+                                startDate = startDateParsed,  // Change to Date type
+                                endDate = endDateParsed,      // Change to Date type
+                                startTime = startTimeParsed,
+                                notes = notes
+                            )
+                            viewModel.addReminder(reminder)
+                            viewModel.scheduleReminders(reminder, context)
+
+                            Toast.makeText(context, "Påminnelse opprettet!", Toast.LENGTH_SHORT).show()
+                            navController.navigateUp() // Go back to the previous screen
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(containerColor = primaryLight),
+
                     ) {
-                        Text("Create", color = Color.White)
+                        Text("Add Reminder")
                     }
+                    Spacer(modifier = Modifier.width(16.dp))
                     Button(
                         onClick = { navController.navigateUp() },
-                        modifier = Modifier.weight(1f).padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = errorLight)
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     ) {
                         Text("Cancel", color = Color.White)
                     }
