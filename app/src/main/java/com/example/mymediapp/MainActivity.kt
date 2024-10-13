@@ -28,14 +28,14 @@ import androidx.navigation.compose.*
 import com.example.compose.secondaryLight
 import com.example.compose.tertiaryContainerLight
 import com.example.mymediapp.ui.screens.ReminderScreen
-import com.example.mymediapp.ui.screens.calendarScreen
 import com.example.mymediapp.ui.screens.homeScreen
 import com.example.mymediapp.ui.screens.loginScreen
-import com.example.mymediapp.ui.screens.myDietScreen
 import com.example.mymediapp.ui.screens.myMedicationsScreen
 import com.example.mymediapp.ui.screens.settingScreen
 import com.example.mymediapp.ui.screens.userProfileScreen
 import com.example.mymediapp.ui.theme.AppTheme
+import com.example.mymediapp.model.Diet
+import com.example.mymediapp.model.MyCalendar
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -82,21 +82,25 @@ fun MyApp() {
                 }
             }
         ) { padding ->
-            // Her definerer vi NavHost som håndterer navigasjonen mellom skjermene
+            // Define NavHost to handle navigation between screens
             NavHost(navController = navController, startDestination = "home", Modifier.padding(padding)) {
                 composable("home") { homeScreen(navController) }
                 composable("reminder") { ReminderScreen(navController) }
                 composable("medications") { myMedicationsScreen(navController) }
-                composable("diet") { myDietScreen(navController) }
-                composable("calendar") { calendarScreen(navController) }
+                composable("diet") {
+                    Diet().MealApp() // Updated to use the MealApp Composable from Diet.kt
+                }
+                composable("calendar") {
+                    MyCalendar().CalendarView(mealItems = listOf()) // Updated to use the CalendarView Composable from Calendar.kt
+                }
                 composable("settings") { settingScreen(navController) }
                 composable("profile") { userProfileScreen(navController) }
                 composable("logout") { loginScreen(navController) }
-
             }
         }
     }
 }
+
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
@@ -126,12 +130,10 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         },
         selected = false,
         onClick = {
-
             scope.launch {
-                navController.navigate("home")  // Navigate to "medications" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("home") // Navigate to "home" screen
+                drawerState.close() // Close drawer after navigation
             }
-
         }
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -153,24 +155,19 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         },
         selected = false,
         onClick = {
-
             scope.launch {
-                navController.navigate("medications")  // Navigate to "medications" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("medications") // Navigate to "medications" screen
+                drawerState.close() // Close drawer after navigation
             }
-
         }
     )
-
     Spacer(modifier = Modifier.height(8.dp))
-
     NavigationDrawerItem(
         icon = {
             Icon(
                 imageVector = Icons.Rounded.Favorite,
                 contentDescription = "My diet",
                 modifier = Modifier.size(27.dp)
-
             )
         },
         label = {
@@ -184,21 +181,18 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("diet")  // Navigate to "diet" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("diet") // Navigate to "diet" screen
+                drawerState.close() // Close drawer after navigation
             }
         }
     )
-
     Spacer(modifier = Modifier.height(8.dp))
-
     NavigationDrawerItem(
         icon = {
             Icon(
                 imageVector = Icons.Rounded.DateRange,
                 contentDescription = "Calendar",
                 modifier = Modifier.size(27.dp)
-
             )
         },
         label = {
@@ -212,20 +206,18 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("calendar")  // Navigate to "calendar" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("calendar") // Navigate to "calendar" screen
+                drawerState.close() // Close drawer after navigation
             }
         }
     )
     Spacer(modifier = Modifier.height(8.dp))
-
     NavigationDrawerItem(
         icon = {
             Icon(
                 imageVector = Icons.Rounded.Settings,
                 contentDescription = "Settings",
                 modifier = Modifier.size(27.dp)
-
             )
         },
         label = {
@@ -239,22 +231,18 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("settings")  // Navigate to "settings" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("settings") // Navigate to "settings" screen
+                drawerState.close() // Close drawer after navigation
             }
         }
     )
-
     Spacer(modifier = Modifier.height(8.dp))
-
     NavigationDrawerItem(
-
         icon = {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,
                 contentDescription = "My Profile",
                 modifier = Modifier.size(27.dp)
-
             )
         },
         label = {
@@ -268,20 +256,18 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("profile")  // Navigate to "profile" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("profile") // Navigate to "profile" screen
+                drawerState.close() // Close drawer after navigation
             }
         }
     )
     Spacer(modifier = Modifier.height(208.dp))
-
     NavigationDrawerItem(
         icon = {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
                 contentDescription = "Log out",
                 modifier = Modifier.size(27.dp)
-
             )
         },
         label = {
@@ -295,13 +281,11 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                //TODO: implement logic to log out
-                navController.navigate("logout")  // Navigate to "login" screen
-                drawerState.close()  // Close drawer after navigation
+                navController.navigate("logout") // Navigate to "logout" screen
+                drawerState.close() // Close drawer after navigation
             }
         }
     )
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -320,12 +304,11 @@ fun TopBar(onOpenDrawer: () -> Unit) {
                     .scale(1.4f)
                     .padding(start = 16.dp, end = 16.dp)
                     .clickable {
-                    onOpenDrawer()
-                }
+                        onOpenDrawer()
+                    }
             )
         },
-        title = { Text("")
-        }
+        title = { Text("") }
     )
 }
 
@@ -334,5 +317,3 @@ fun currentRoute(navController: NavHostController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }
-
-
