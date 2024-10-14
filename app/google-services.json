@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "299946873725",
+    "project_id": "mymediapp-770e1",
+    "storage_bucket": "mymediapp-770e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299946873725:android:5fa18e3a1cdd7cd865f214",
+        "android_client_info": {
+          "package_name": "com.example.mymediapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSD8ZLm0KjdZA-csyjsEi3wlQUS19dwbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

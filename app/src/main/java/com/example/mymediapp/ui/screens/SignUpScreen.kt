@@ -1,5 +1,6 @@
-package com.example.mymediapp.data
+package com.example.mymediapp.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,19 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun SignUpScreen(navController: NavController) {
-    //variables for first name, last name, email, password and error message.
     var name by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
-    //Firestore instance
+
+    //Firebase Authentication and Firestore for registering and storing user data
+    val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
     Column(
@@ -46,13 +48,13 @@ fun SignUpScreen(navController: NavController) {
         TextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") }
+            label = { Text("Navn") }
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = lastName,
             onValueChange = { lastName = it },
-            label = { Text("Last Name") }
+            label = { Text("Etternavn") }
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
@@ -64,49 +66,56 @@ fun SignUpScreen(navController: NavController) {
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Passord") },
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        //Button for sending user data to Firestore
+        // Validates the password has a minimum of 6 characters
         Button(onClick = {
-            if (name.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-
-                //hashmap with user-data
-                val user = hashMapOf(
-                    "name" to name,
-                    "lastName" to lastName,
-                    "email" to email,
-                    "password" to password
-                )
-
-                // Save user-data in the  collection "users" in Firestore
-                db.collection("users")
-                    .add(user)
-                    .addOnSuccessListener {
-                        // home-screen if registration is successful
-                        navController.navigate("home")
-                    }
-                    .addOnFailureListener { e ->
-                        // If not Error message
-                        errorMessage = "Failed to register: ${e.message}"
-                    }
-            } else {
-                errorMessage = "All fields are required"
+            Log.d("SignUp", "Attempting to sign up with email: $email")
+            if (password.length < 6) {
+                errorMessage = "Passord må være minst 6 tegn"
+                return@Button
             }
+
+            // Registers user with email and password using the Firebase Authentication
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // If registration successful, we get the users ID
+                        val userId = auth.currentUser?.uid
+                        val user = hashMapOf(
+                            "name" to name,
+                            "lastName" to lastName,
+                            "email" to email
+                        )
+
+                        // saving user-data in Firestore with users ID as a document ID
+                        userId?.let {
+                            db.collection("users").document(it)
+                                .set(user)
+                                .addOnSuccessListener {
+                                    Log.d("SignUp", "User data added to Firestore")
+                                    navController.navigate("login") // Naviger til login etter vellykket registrering
+                                }
+                                //Errors when saving users-data to Firestore
+                                .addOnFailureListener { e ->
+                                    errorMessage = "Failed to save user data: ${e.message}"
+                                    Log.e("SignUp", "Firestore error: ${e.message}")
+                                }
+                        }
+                    } else {
+                        errorMessage = task.exception?.message ?: "Registrering mislyktes"
+                        Log.e("SignUp", "Registrering feilet: ${task.exception?.message}")
+                    }
+                }
         }) {
-            Text("Sign Up")
+            Text("Registrer deg")
         }
-        //Error message if one is set already
+        //Error message if there is one
         if (errorMessage.isNotEmpty()) {
             Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        //Button for login screen
-        Button(onClick = { navController.navigate("login") }) {
-            Text("Already have an account? Login")
         }
     }
 }
