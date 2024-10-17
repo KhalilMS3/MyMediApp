@@ -303,7 +303,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             viewModel.scheduleReminders(reminder, context)
 
                             Toast.makeText(context, "Påminnelse opprettet!", Toast.LENGTH_SHORT).show()
-                            navController.navigateUp() // Go back to the previous screen
+                            navController.navigate("medication") // Go back to the my medication screen
                         },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = primaryLight),
