@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.android)
+    implementation ("androidx.compose.material:material-icons-extended:1.5.1")
+
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.0.0")) // Firebase BOM
@@ -77,6 +79,14 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.firebase.firestore)
+
+    // Google Maps and Location Services
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.maps.android:maps-compose:2.11.2")
+    implementation("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
+
 
     // Testing
     testImplementation(libs.junit)

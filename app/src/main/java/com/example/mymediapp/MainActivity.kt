@@ -36,9 +36,12 @@ import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.UserProfileScreen
 import com.example.mymediapp.ui.screens.LoginScreen
+import com.example.mymediapp.ui.screens.MapScreenContent
 import com.example.mymediapp.ui.screens.SignUpScreen
 import com.example.mymediapp.ui.screens.StartScreen
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.rounded.Place
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +106,7 @@ fun MyApp() {
                     UserProfileScreen(userId, navController)
                 }
                 composable("startscreen") { StartScreen(navController) }
+                composable("map") { MapScreenContent() }
             }
         }
     }
@@ -289,6 +293,30 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         onClick = {
             scope.launch {
                 navController.navigate("startscreen") // Navigate to "logout" screen
+                drawerState.close() // Close drawer after navigation
+            }
+        }
+    )
+    NavigationDrawerItem(
+        icon = {
+            Icon(
+                imageVector = Icons.Rounded.Place,
+                contentDescription = "Pharmacy Map",
+                modifier = Modifier.size(27.dp)
+            )
+        },
+        label = {
+            Text(
+                text = "Pharmacy Map",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(16.dp)
+            )
+        },
+        selected = false,
+        onClick = {
+            scope.launch {
+                navController.navigate("map") // Navigate to "map" screen
                 drawerState.close() // Close drawer after navigation
             }
         }
