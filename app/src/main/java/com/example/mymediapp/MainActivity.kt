@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.automirrored.rounded.Help
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -36,11 +37,13 @@ import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.UserProfileScreen
 import com.example.mymediapp.ui.screens.LoginScreen
-import com.example.mymediapp.ui.screens.MapScreenContent
+import com.example.mymediapp.ui.screens.MapScreen
 import com.example.mymediapp.ui.screens.SignUpScreen
 import com.example.mymediapp.ui.screens.StartScreen
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.rounded.Place
+import com.example.mymediapp.ui.screens.AboutUsScreen
+import com.example.mymediapp.ui.screens.MapScreenContent
 
 
 class MainActivity : ComponentActivity() {
@@ -107,6 +110,7 @@ fun MyApp() {
                 }
                 composable("startscreen") { StartScreen(navController) }
                 composable("map") { MapScreenContent() }
+                composable("AboutUs") { AboutUsScreen() }
             }
         }
     }
@@ -272,6 +276,31 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
             }
         }
     )
+    Spacer(modifier = Modifier.height(8.dp))
+    NavigationDrawerItem(
+        icon = {
+            Icon(
+                imageVector = Icons.Rounded.Place,
+                contentDescription = "Find Pharmacy",
+                modifier = Modifier.size(27.dp)
+            )
+        },
+        label = {
+            Text(
+                text = "Nearby Pharmacies",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(16.dp)
+            )
+        },
+        selected = false,
+        onClick = {
+            scope.launch {
+                navController.navigate("map") // Navigate to "map" screen
+                drawerState.close() // Close drawer after navigation
+            }
+        }
+    )
     Spacer(modifier = Modifier.height(208.dp))
     NavigationDrawerItem(
         icon = {
@@ -297,17 +326,18 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
             }
         }
     )
+
     NavigationDrawerItem(
         icon = {
             Icon(
-                imageVector = Icons.Rounded.Place,
-                contentDescription = "Pharmacy Map",
+                imageVector = Icons.AutoMirrored.Rounded.Help,
+                contentDescription = "About Us",
                 modifier = Modifier.size(27.dp)
             )
         },
         label = {
             Text(
-                text = "Pharmacy Map",
+                text = "About Us",
                 fontSize = 17.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(16.dp)
@@ -316,11 +346,12 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("map") // Navigate to "map" screen
+                navController.navigate("AboutUs") // Navigate to "logout" screen
                 drawerState.close() // Close drawer after navigation
             }
         }
     )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

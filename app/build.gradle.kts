@@ -64,6 +64,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.android)
     implementation ("androidx.compose.material:material-icons-extended:1.5.1")
+    implementation ("androidx.compose.material:material:1.5.1")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.5.1")
+    implementation("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
 
     // Firebase
@@ -84,8 +89,16 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:2.11.2")
-    implementation("androidx.compose.ui:ui:1.5.1")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("com.google.android.libraries.places:places:3.2.0")
+
+
+    /*// For network requests (optional, if fetching data)
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation ("com.squareup.okio:okio:3.5.0")*/
+
+    /*// JSON parsing (optional, if fetching data)
+    implementation ("com.squareup.moshi:moshi:1.14.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.14.0")*/
 
 
     // Testing

@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
+
 class ReminderViewModel : ViewModel() {
 
     // LiveData for medicine search results
@@ -31,6 +32,9 @@ class ReminderViewModel : ViewModel() {
     // LiveData for list of saved reminders
     private val _reminders = MutableLiveData<List<Reminder>>(emptyList())
     val reminders: LiveData<List<Reminder>> get() = _reminders
+    private val _medications = MutableLiveData<List<Reminder>>(emptyList())
+    val medications: LiveData<List<Reminder>> = _medications
+
 
     fun parseTimeBetweenDoses(timeString: String): Pair<Int, Int> {
         val parts = timeString.split("h", "m")
@@ -72,7 +76,14 @@ class ReminderViewModel : ViewModel() {
         Log.d("ReminderViewModel", "Current list of reminders: $updatedReminders")
     }
 
-        // Function to schedule notifications based on the reminder
+    fun addMedication(reminder: Reminder) {
+        val updatedList = _medications.value?.toMutableList() ?: mutableListOf()
+        updatedList.add(reminder)
+        _medications.value = updatedList
+    }
+
+
+    // Function to schedule notifications based on the reminder
     @SuppressLint("ScheduleExactAlarm")
     fun scheduleReminders(reminder: Reminder, context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
