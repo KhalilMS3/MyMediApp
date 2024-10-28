@@ -32,7 +32,7 @@ fun MapScreenContent() {
     val context = LocalContext.current
     val pharmacies = listOf(
         LatLng(59.12381847069611, 11.387099491629524), // Apotek 1 Svanen Halden
-        LatLng(59.12103238604425, 11.38714240798957), // Apotek 1 Ørnen Halden
+        LatLng(59.12073366426498, 11.387323039112363), // Apotek 1 Ørnen Halden
         LatLng(59.13813818120554, 11.376318530258079), // Apotek 1 Brødløs Halden
         LatLng(59.121028810345926, 11.377691821241067), // Vitusapotek Høvleriet
         LatLng(59.12182528695402, 11.382507550921988)   // Apotek 1 Tista
