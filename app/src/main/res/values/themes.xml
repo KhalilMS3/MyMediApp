@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MyMediAPP" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Existing App Theme -->
+    <style name="Theme.MyMediAPP" parent="android:Theme.Material.Light.NoActionBar">
+
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.MyMediAPP.Splash" parent="Theme.MyMediAPP">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
 </resources>

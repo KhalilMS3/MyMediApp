@@ -37,7 +37,6 @@ import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.UserProfileScreen
 import com.example.mymediapp.ui.screens.LoginScreen
-import com.example.mymediapp.ui.screens.MapScreen
 import com.example.mymediapp.ui.screens.SignUpScreen
 import com.example.mymediapp.ui.screens.StartScreen
 import kotlinx.coroutines.launch
@@ -47,8 +46,14 @@ import com.example.mymediapp.ui.screens.MapScreenContent
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        setTheme(R.style.Theme_MyMediAPP)
         super.onCreate(savedInstanceState)
+
+
+
         setContent {
             AppTheme {
                 MyApp()
