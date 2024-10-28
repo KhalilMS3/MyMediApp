@@ -1,6 +1,5 @@
 package com.example.mymediapp.ui.screens
 
-
 import android.Manifest
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,28 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
-import kotlinx.coroutines.tasks.await
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.libraries.places.api.model.Place
 import android.content.pm.PackageManager
-
 import androidx.activity.compose.rememberLauncherForActivityResult
-
 import androidx.activity.result.contract.ActivityResultContracts
-
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import android.content.Context
-
-
 
 class MapScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,22 +30,13 @@ class MapScreen : ComponentActivity() {
 @Composable
 fun MapScreenContent() {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val pharmacies = listOf(
         LatLng(59.12381847069611, 11.387099491629524), // Apotek 1 Svanen Halden
         LatLng(59.12103238604425, 11.38714240798957), // Apotek 1 Ørnen Halden
         LatLng(59.13813818120554, 11.376318530258079), // Apotek 1 Brødløs Halden
         LatLng(59.121028810345926, 11.377691821241067), // Vitusapotek Høvleriet
         LatLng(59.12182528695402, 11.382507550921988)   // Apotek 1 Tista
-
     )
-
-    // Initialize the Places SDK if not already initialized
-  /*  LaunchedEffect(Unit) {
-        if (!Places.isInitialized()) {
-            Places.initialize(context.applicationContext, "AIzaSyBBsduLzEvQQEDltvXW3LM7RTjfs29_SGc")
-        }
-    }*/
 
     // State variables
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
@@ -98,8 +75,6 @@ fun MapScreenContent() {
         }
     }
 
-
-
     // Map camera position state
     val cameraPositionState = rememberCameraPositionState()
 
@@ -110,31 +85,26 @@ fun MapScreenContent() {
         }
     }
 
-
     // Display the Google Map
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
             isMyLocationEnabled = permissionGranted.value,
-
-        ),
+            ),
         uiSettings = MapUiSettings(
             myLocationButtonEnabled = true
         )
     ) {
         // Display pharmacy markers
-            pharmacies.forEach { location ->
-                Marker(
-                    state = rememberMarkerState(position = location),
-                    title = "Pharmacy",
-                    snippet = "Pharmacy Location"
-                )
-
+        pharmacies.forEach { location ->
+            Marker(
+                state = rememberMarkerState(position = location),
+                title = "Pharmacy",
+                snippet = "Pharmacy Location"
+            )
 
         }
     }
 }
-
-
 
