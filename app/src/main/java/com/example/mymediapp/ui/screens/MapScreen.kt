@@ -45,18 +45,25 @@ class MapScreen : ComponentActivity() {
 fun MapScreenContent() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val pharmacies = listOf(
+        LatLng(59.12381847069611, 11.387099491629524), // Apotek 1 Svanen Halden
+        LatLng(59.12103238604425, 11.38714240798957), // Apotek 1 Ørnen Halden
+        LatLng(59.13813818120554, 11.376318530258079), // Apotek 1 Brødløs Halden
+        LatLng(59.121028810345926, 11.377691821241067), // Vitusapotek Høvleriet
+        LatLng(59.12182528695402, 11.382507550921988)   // Apotek 1 Tista
+
+    )
 
     // Initialize the Places SDK if not already initialized
-    LaunchedEffect(Unit) {
+  /*  LaunchedEffect(Unit) {
         if (!Places.isInitialized()) {
-            Places.initialize(context.applicationContext, "YOUR_API_KEY")
+            Places.initialize(context.applicationContext, "AIzaSyBBsduLzEvQQEDltvXW3LM7RTjfs29_SGc")
         }
-    }
+    }*/
 
     // State variables
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
     val permissionGranted = remember { mutableStateOf(false) }
-    var pharmacyLocations by remember { mutableStateOf<List<LatLng>>(emptyList()) }
 
     // Request location permission
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -91,14 +98,7 @@ fun MapScreenContent() {
         }
     }
 
-    // Fetch nearby pharmacies when userLocation is available
-    LaunchedEffect(userLocation) {
-        userLocation?.let { location ->
-            coroutineScope.launch(Dispatchers.IO) {
-                pharmacyLocations = getNearbyPharmacies(location, context)
-            }
-        }
-    }
+
 
     // Map camera position state
     val cameraPositionState = rememberCameraPositionState()
@@ -110,25 +110,6 @@ fun MapScreenContent() {
         }
     }
 
-    // Custom map style to hide other points of interest
-  /*  val mapStyleOptions = remember {
-        MapStyleOptions("""
-            [
-              {
-                "featureType": "poi",
-                "stylers": [
-                  { "visibility": "off" }
-                ]
-              },
-              {
-                "featureType": "poi.medical",
-                "stylers": [
-                  { "visibility": "on" }
-                ]
-              }
-            ]
-        """.trimIndent())
-    }*/
 
     // Display the Google Map
     GoogleMap(
@@ -136,55 +117,22 @@ fun MapScreenContent() {
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
             isMyLocationEnabled = permissionGranted.value,
-            //mapStyleOptions = mapStyleOptions
+
         ),
         uiSettings = MapUiSettings(
             myLocationButtonEnabled = true
         )
     ) {
         // Display pharmacy markers
-        pharmacyLocations.forEach { location ->
-            Marker(
-                state = rememberMarkerState(position = location),
-                title = "Pharmacy"
-            )
+            pharmacies.forEach { location ->
+                Marker(
+                    state = rememberMarkerState(position = location),
+                    title = "Pharmacy",
+                    snippet = "Pharmacy Location"
+                )
+
+
         }
-    }
-}
-suspend fun getNearbyPharmacies(
-    userLocation: LatLng,
-    context: Context
-): List<LatLng> {
-    val placesClient = Places.createClient(context)
-
-    // Define the place fields to return
-    val placeFields = listOf(
-        Place.Field.NAME,
-        Place.Field.LAT_LNG,
-        Place.Field.TYPES
-    )
-
-    // Create a request object
-    val request = FindCurrentPlaceRequest.newInstance(placeFields)
-
-    // Check permission before making the request
-    if (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-    ) {
-        return emptyList()
-    }
-
-    return try {
-        val response = placesClient.findCurrentPlace(request).await()
-        response.placeLikelihoods
-            .filter { likelihood ->
-                likelihood.place.types?.contains(Place.Type.PHARMACY) == true
-            }
-            .mapNotNull { it.place.latLng }
-    } catch (e: Exception) {
-        emptyList()
     }
 }
 
