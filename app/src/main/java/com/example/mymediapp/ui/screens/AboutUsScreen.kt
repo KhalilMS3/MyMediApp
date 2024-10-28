@@ -14,12 +14,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+
+
 
 @Composable
-fun AboutUsScreen() {
+fun AboutUsScreen(navController: NavController) {
     val team17info = "Team 17 consists of three members: Frans, Khlil, and Dilbren, who are students at Høyskolen i Østfold. Our goal is to create an app that helps people remember when to take their medications and log their food intake. This will assist users in keeping track of their health routines and provide doctors with a quick overview of their diet during visits."
     val email = "postmottak@hiof.no"
     val phone = "69 60 80 00"

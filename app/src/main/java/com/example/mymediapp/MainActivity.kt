@@ -110,7 +110,7 @@ fun MyApp() {
                 }
                 composable("startscreen") { StartScreen(navController) }
                 composable("map") { MapScreenContent() }
-                composable("AboutUs") { AboutUsScreen() }
+                composable("AboutUs") { AboutUsScreen(navController) }
             }
         }
     }
