@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,6 +35,7 @@ fun SignUpScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     //Firestore instance
+    val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
     Column(
@@ -72,25 +74,33 @@ fun SignUpScreen(navController: NavController) {
         //Button for sending user data to Firestore
         Button(onClick = {
             if (name.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
+                // Create user with email and password using Firebase Authentication
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // User created successfully, now save additional user data in Firestore
+                            val userId = auth.currentUser?.uid
+                            val user = hashMapOf(
+                                "name" to name,
+                                "lastName" to lastName,
+                                "email" to email
+                            )
 
-                //hashmap with user-data
-                val user = hashMapOf(
-                    "name" to name,
-                    "lastName" to lastName,
-                    "email" to email,
-                    "password" to password
-                )
-
-                // Save user-data in the  collection "users" in Firestore
-                db.collection("users")
-                    .add(user)
-                    .addOnSuccessListener {
-                        // home-screen if registration is successful
-                        navController.navigate("home")
-                    }
-                    .addOnFailureListener { e ->
-                        // If not Error message
-                        errorMessage = "Failed to register: ${e.message}"
+                            // Save user data in the collection "users" in Firestore
+                            userId?.let {
+                                db.collection("users").document(it)
+                                    .set(user)
+                                    .addOnSuccessListener {
+                                        // Navigate to home screen if registration is successful
+                                        navController.navigate("home")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        errorMessage = "Failed to save user data: ${e.message}"
+                                    }
+                            }
+                        } else {
+                            errorMessage = "Failed to register: ${task.exception?.message}"
+                        }
                     }
             } else {
                 errorMessage = "All fields are required"
@@ -98,6 +108,8 @@ fun SignUpScreen(navController: NavController) {
         }) {
             Text("Sign Up")
         }
+
+
         //Error message if one is set already
         if (errorMessage.isNotEmpty()) {
             Text(text = errorMessage, color = MaterialTheme.colorScheme.error)

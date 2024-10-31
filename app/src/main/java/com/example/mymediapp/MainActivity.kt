@@ -276,8 +276,15 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("profile/{userId}") // Navigate to "profile" screen
-                drawerState.close() // Close drawer after navigation
+                // Clear user session before navigating to the startscreen
+
+                // Navigate to the startscreen
+                navController.navigate("profile/{userId}") {
+                    popUpTo(0) { inclusive = true } // Ensure that the back stack is cleared
+                }
+
+                // Close the drawer
+                drawerState.close()
             }
         }
     )

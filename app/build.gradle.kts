@@ -30,22 +30,25 @@ android {
             )
         }
     }
+
     buildFeatures {
         viewBinding = true
+        compose = true
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -63,17 +66,21 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.coroutines.android)
-    implementation ("androidx.compose.material:material-icons-extended:1.5.1")
-    implementation ("androidx.compose.material:material:1.5.1")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.5.1")
+    implementation("androidx.compose.material:material-icons-extended:1.5.1")
+    implementation("androidx.compose.material:material:1.5.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
     implementation("androidx.compose.ui:ui:1.5.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
-
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.0.0")) // Firebase BOM
     implementation("com.google.firebase:firebase-auth-ktx") // Firebase Authentication
+    implementation("com.google.firebase:firebase-firestore-ktx") // Firestore KTX
+    implementation("com.google.firebase:firebase-storage-ktx") // Storage
+
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     // Retrofit and Gson converter
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -82,24 +89,13 @@ dependencies {
 
     // For LiveData and ViewModel
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.androidx.ui.text.google.fonts)
-    implementation(libs.firebase.firestore)
 
     // Google Maps and Location Services
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:2.11.2")
     implementation("com.google.android.libraries.places:places:3.2.0")
-
-
-    /*// For network requests (optional, if fetching data)
-    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation ("com.squareup.okio:okio:3.5.0")*/
-
-    /*// JSON parsing (optional, if fetching data)
-    implementation ("com.squareup.moshi:moshi:1.14.0")
-    implementation ("com.squareup.moshi:moshi-kotlin:1.14.0")*/
-
+    implementation(libs.ui.text.google.fonts)
 
     // Testing
     testImplementation(libs.junit)
@@ -109,4 +105,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.camera:camera-core:1.1.0")
+    implementation("androidx.camera:camera-camera2:1.1.0")
+    implementation("androidx.camera:camera-lifecycle:1.1.0")
+    implementation("androidx.camera:camera-view:1.1.0")
+    implementation("androidx.compose.ui:ui:1.0.5")
+    implementation("androidx.compose.ui:ui-tooling:1.0.5")
+    implementation("androidx.compose.foundation:foundation:1.0.5")
 }
