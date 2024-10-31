@@ -8,7 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
-import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -35,25 +36,20 @@ import com.example.mymediapp.ui.screens.settingScreen
 import com.example.mymediapp.ui.theme.AppTheme
 import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
+import com.example.mymediapp.navigation.AppNavigation
 import com.example.mymediapp.ui.screens.UserProfileScreen
 import com.example.mymediapp.ui.screens.LoginScreen
 import com.example.mymediapp.ui.screens.SignUpScreen
 import com.example.mymediapp.ui.screens.StartScreen
-import kotlinx.coroutines.launch
-import androidx.compose.material.icons.rounded.Place
 import com.example.mymediapp.ui.screens.AboutUsScreen
 import com.example.mymediapp.ui.screens.MapScreenContent
-
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         setTheme(R.style.Theme_MyMediAPP)
         super.onCreate(savedInstanceState)
-
-
-
         setContent {
             AppTheme {
                 MyApp()
@@ -65,333 +61,5 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyApp() {
-    val navController = rememberNavController()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                DrawerContent(navController = navController, drawerState = drawerState)
-            }
-        }
-    ) {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    onOpenDrawer = {
-                        scope.launch {
-                            if (drawerState.isClosed) drawerState.open() else drawerState.close()
-                        }
-                    }
-                )
-            },
-            floatingActionButton = {
-                if (currentRoute(navController) != "reminder") {
-                    FloatingActionButton(onClick = { navController.navigate("reminder") }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Reminder")
-                    }
-                }
-            }
-        ) { padding ->
-            // Define NavHost to handle navigation between screens
-            NavHost(navController = navController, startDestination = "startscreen", Modifier.padding(padding)) {
-                composable("login") { LoginScreen(navController) }
-                composable("signup") { SignUpScreen(navController) }
-                composable("home") { homeScreen(navController) }
-                composable("reminder") { ReminderScreen(navController) }
-                composable("medications") { myMedicationsScreen(navController) }
-                composable("diet") {
-                    Diet().MealApp() // Updated to use the MealApp Composable from Diet.kt
-                }
-                composable("calendar") {
-                    MyCalendar().CalendarView(mealItems = listOf()) // Updated to use the CalendarView Composable from Calendar.kt
-                }
-                composable("settings") { settingScreen(navController) }
-                composable("profile/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: ""
-                    UserProfileScreen(userId, navController)
-                }
-                composable("startscreen") { StartScreen(navController) }
-                composable("map") { MapScreenContent() }
-                composable("AboutUs") { AboutUsScreen(navController) }
-            }
-        }
-    }
-}
-
-@Composable
-fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
-    val scope = rememberCoroutineScope()
-    Text(
-        text = "My Medi",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.ExtraBold,
-        modifier = Modifier.padding(16.dp)
-    )
-    HorizontalDivider()
-    Spacer(modifier = Modifier.height(20.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.Home,
-                contentDescription = "Home",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "Home",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("home") // Navigate to "home" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.Star,
-                contentDescription = "My medications",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "My medications",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("medications") // Navigate to "medications" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.Favorite,
-                contentDescription = "My diet",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "My diet",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("diet") // Navigate to "diet" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.DateRange,
-                contentDescription = "Calendar",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "Calendar",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("calendar") // Navigate to "calendar" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.Settings,
-                contentDescription = "Settings",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "Settings",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("settings") // Navigate to "settings" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.AccountCircle,
-                contentDescription = "My Profile",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "My profile",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                // Clear user session before navigating to the startscreen
-
-                // Navigate to the startscreen
-                navController.navigate("profile/{userId}") {
-                    popUpTo(0) { inclusive = true } // Ensure that the back stack is cleared
-                }
-
-                // Close the drawer
-                drawerState.close()
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.Place,
-                contentDescription = "Find Pharmacy",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "Nearby Pharmacies",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("map") // Navigate to "map" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-    Spacer(modifier = Modifier.height(208.dp))
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
-                contentDescription = "Log out",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "Log out",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("startscreen") // Navigate to "logout" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-
-    NavigationDrawerItem(
-        icon = {
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.Help,
-                contentDescription = "About Us",
-                modifier = Modifier.size(27.dp)
-            )
-        },
-        label = {
-            Text(
-                text = "About Us",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                modifier = Modifier.padding(16.dp)
-            )
-        },
-        selected = false,
-        onClick = {
-            scope.launch {
-                navController.navigate("AboutUs") // Navigate to "logout" screen
-                drawerState.close() // Close drawer after navigation
-            }
-        }
-    )
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar(onOpenDrawer: () -> Unit) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = tertiaryContainerLight,
-            navigationIconContentColor = secondaryLight
-        ),
-        navigationIcon = {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = "Menu",
-                modifier = Modifier
-                    .scale(1.4f)
-                    .padding(start = 16.dp, end = 16.dp)
-                    .clickable {
-                        onOpenDrawer()
-                    }
-            )
-        },
-        title = { Text("") }
-    )
-}
-
-@Composable
-fun currentRoute(navController: NavHostController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
+    AppNavigation()
 }

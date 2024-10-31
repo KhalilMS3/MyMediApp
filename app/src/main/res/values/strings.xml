@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyMediAPP</string>
+    //TODO: add strings and call them in your code
 </resources>
