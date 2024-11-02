@@ -24,9 +24,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.compose.primaryLight
+import com.example.compose.secondaryContainerLight
+import com.example.mymediapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
@@ -36,45 +47,117 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("E-post") }
+        // Logo
+        Image(
+            painter = painterResource(id = R.drawable.mymedi_full_green),
+            contentDescription = "App Logo",
+            modifier = Modifier.size(150.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Passord") },
-            visualTransformation = PasswordVisualTransformation()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            Log.d("Login", "Attempting to log in with email: $email")
 
-            //Firebase Authentication instance and attempts to login
-            val auth = FirebaseAuth.getInstance()
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        //Login success and navigates to the home-screen
-                        Log.d("Login", "Login successful")
-                        navController.navigate("home")
-                    } else {
-                        //Error message if login fails
-                        errorMessage = task.exception?.message ?: "Innlogging mislyktes"
-                        Log.e("Login", "Innlogging feilet: ${task.exception?.message}")
-                    }
-                }
-        }) {
-            Text("Logg inn")
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Welcome text
+        Text(
+            text = "Welcome back",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black,
+            modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
+
+        )
+
+        // Email input field
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "E-mail",
+                fontSize = 16.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
+            )
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedTextColor = Color.Black,
+                    focusedIndicatorColor = primaryLight,
+                    unfocusedIndicatorColor = Color.Gray
+                )
+            )
         }
-        //Error message if there is one
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Password input field
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Password",
+                fontSize = 16.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
+            )
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation = PasswordVisualTransformation(),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.White,
+                    focusedTextColor = Color.Black,
+                    focusedIndicatorColor = primaryLight,
+                    unfocusedIndicatorColor = Color.Gray
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Login button
+        Button(
+            onClick = {
+                // Firebase authentication logic
+                Log.d("Login", "Attempting to log in with email: $email")
+
+                val auth = FirebaseAuth.getInstance()
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("Login", "Login successful")
+                            navController.navigate("home")
+                        } else {
+                            errorMessage = task.exception?.message ?: "Login failed"
+                            Log.e("Login", "Login failed: ${task.exception?.message}")
+                        }
+                    }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = secondaryContainerLight,
+                contentColor = Color.White
+            )
+        ) {
+            Text(
+                text = "Login",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        // Error message
         if (errorMessage.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error

@@ -16,6 +16,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.twotone.ArrowBack
+import androidx.compose.material.icons.twotone.ChatBubble
+import androidx.compose.material.icons.twotone.DateRange
+import androidx.compose.material.icons.twotone.Medication
+import androidx.compose.material.icons.twotone.Numbers
+import androidx.compose.material.icons.twotone.Timer
+import androidx.compose.material.icons.twotone.WatchLater
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,9 +47,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.compose.errorContainerLightMediumContrast
 import com.example.compose.onPrimaryContainerDark
 import com.example.compose.onPrimaryContainerLight
 import com.example.compose.primaryLight
+import com.example.compose.secondaryLightMediumContrast
 import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.model.Time
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
@@ -116,7 +125,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                 title = { Text("Create new Reminder") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.TwoTone.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -140,7 +149,10 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                         }
                     },
                     label = { Text("Search for medicine") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(Icons.TwoTone.Medication, contentDescription = "Medication")
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -178,6 +190,9 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             value = numberOfDoses,
                             onValueChange = { numberOfDoses = it },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                            leadingIcon = {
+                                Icon(Icons.TwoTone.Numbers, contentDescription = "Number of doses")
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
@@ -198,7 +213,9 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             },
                             label = { Text("__h.__m") },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                        )
+                            leadingIcon = {
+                                Icon(Icons.TwoTone.Timer, contentDescription = "Time between doses")}
+                            )
                     }
                 }
 
@@ -211,7 +228,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                             readOnly = true, // Open DatePicker on click
                             leadingIcon = {
-                                Icon(Icons.Default.DateRange, contentDescription = "Start Date", modifier = Modifier.clickable { startDatePicker.show() })
+                                Icon(Icons.TwoTone.DateRange, contentDescription = "Start Date", modifier = Modifier.clickable { startDatePicker.show() })
                             }
                         )
                     }
@@ -224,7 +241,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                             readOnly = true, // Open DatePicker on click
                             leadingIcon = {
-                                Icon(Icons.Default.DateRange, contentDescription = "End Date", modifier = Modifier.clickable { endDatePicker.show() })
+                                Icon(Icons.TwoTone.DateRange, contentDescription = "End Date", modifier = Modifier.clickable { endDatePicker.show() })
                             }
                         )
                     }
@@ -240,7 +257,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     readOnly = true, // Open TimePicker on click
                     leadingIcon = {
-                        Icon(Icons.Default.DateRange, contentDescription = "Start Time", modifier = Modifier.clickable { startTimePicker.show() })
+                        Icon(Icons.TwoTone.WatchLater, contentDescription = "Start Time", modifier = Modifier.clickable { startTimePicker.show() })
                     }
                 )
 
@@ -251,7 +268,10 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     value = notes,
                     onValueChange = { notes = it },
                     modifier = Modifier.fillMaxWidth().height(120.dp).padding(vertical = 8.dp),
-                )
+                    leadingIcon = {
+                        Icon(Icons.TwoTone.ChatBubble, contentDescription = "Notes")
+                    }
+                    )
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -302,11 +322,11 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             viewModel.addReminder(reminder)
                             viewModel.scheduleReminders(reminder, context)
 
-                            Toast.makeText(context, "Påminnelse opprettet!", Toast.LENGTH_SHORT).show()
-                            navController.navigate("medication") // Go back to the my medication screen
+                            Toast.makeText(context, "Reminder created", Toast.LENGTH_SHORT).show()
+                            navController.navigate("home") // Go back to the my medication screen
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryLight),
+                        colors = ButtonDefaults.buttonColors(containerColor = secondaryLightMediumContrast),
 
                     ) {
                         Text("Add Reminder")
@@ -315,7 +335,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     Button(
                         onClick = { navController.navigateUp() },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                        colors = ButtonDefaults.buttonColors(containerColor = errorContainerLightMediumContrast),
                     ) {
                         Text("Cancel", color = Color.White)
                     }

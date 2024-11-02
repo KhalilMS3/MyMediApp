@@ -32,6 +32,7 @@ import com.google.firebase.storage.UploadTask
 import coil.compose.rememberImagePainter
 import android.Manifest
 import android.widget.Toast
+import androidx.camera.core.Camera
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import java.io.ByteArrayOutputStream
