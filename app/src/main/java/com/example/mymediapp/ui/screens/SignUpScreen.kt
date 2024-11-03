@@ -163,17 +163,19 @@ fun SignUpScreen(navController: NavController) {
         // Sign up button
         Button(
             onClick = {
-                Log.d("SignUp", "Attempting to sign up with email: $email")
+                errorMessage = ""
+                if (name.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
+                    errorMessage = "All fields are required"
+                    return@Button
+                }
                 if (password.length < 6) {
                     errorMessage = "Password must be at least 6 characters"
                     return@Button
                 }
 
-                // Registers user with email and password using Firebase Authentication
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // If registration successful, get user's ID
                             val userId = auth.currentUser?.uid
                             val user = hashMapOf(
                                 "name" to name,
@@ -181,23 +183,18 @@ fun SignUpScreen(navController: NavController) {
                                 "email" to email
                             )
 
-                            // Save user data in Firestore with user's ID as document ID
                             userId?.let {
                                 db.collection("users").document(it)
                                     .set(user)
                                     .addOnSuccessListener {
-                                        Log.d("SignUp", "User data added to Firestore")
-                                        navController.navigate("home") // Navigate to login after successful registration
+                                        navController.navigate("home")
                                     }
-                                    // Error when saving user data to Firestore
                                     .addOnFailureListener { e ->
                                         errorMessage = "Failed to save user data: ${e.message}"
-                                        Log.e("SignUp", "Firestore error: ${e.message}")
                                     }
                             }
                         } else {
                             errorMessage = task.exception?.message ?: "Registration failed"
-                            Log.e("SignUp", "Registration failed: ${task.exception?.message}")
                         }
                     }
             },
@@ -208,13 +205,13 @@ fun SignUpScreen(navController: NavController) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = secondaryContainerLight,
                 contentColor = Color.White
-            )
+            ),
+            enabled = name.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()
         ) {
             Text(
                 text = "Sign up",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-
+                fontWeight = FontWeight.SemiBold
             )
         }
 
