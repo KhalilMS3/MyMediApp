@@ -36,6 +36,7 @@ import com.example.compose.tertiaryContainerLight
 import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.*
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -132,6 +133,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
+    val auth = FirebaseAuth.getInstance() // FirebaseAuth-instans
     Text(
         text = "My Medi",
         fontSize = 24.sp,
@@ -234,7 +236,16 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                navController.navigate("startscreen")
+                // Logg ut brukeren
+                auth.signOut()
+
+                // Naviger til startskjermen og tilbakestill eventuelle tilstander
+                navController.navigate("startscreen") {
+                    // Clear the back stack to prevent the user from navigating back to the previous screens
+                    popUpTo("startscreen") { inclusive = true }
+                }
+
+                // Lukk drawer
                 drawerState.close()
             }
         }
