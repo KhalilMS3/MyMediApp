@@ -133,7 +133,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
-    val auth = FirebaseAuth.getInstance() // FirebaseAuth-instans
+    val auth = FirebaseAuth.getInstance() //important for logout KHALIL
     Text(
         text = "My Medi",
         fontSize = 24.sp,
@@ -236,16 +236,11 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         selected = false,
         onClick = {
             scope.launch {
-                // Logg ut brukeren
+                // Log out the user
                 auth.signOut()
-
-                // Naviger til startskjermen og tilbakestill eventuelle tilstander
                 navController.navigate("startscreen") {
-                    // Clear the back stack to prevent the user from navigating back to the previous screens
                     popUpTo("startscreen") { inclusive = true }
                 }
-
-                // Lukk drawer
                 drawerState.close()
             }
         }
