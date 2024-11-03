@@ -172,22 +172,24 @@ fun SignUpScreen(navController: NavController) {
                     errorMessage = "Password must be at least 6 characters"
                     return@Button
                 }
-
+                // Registers user with email and password using Firebase Authentication
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            // If registration successful, get user's ID
                             val userId = auth.currentUser?.uid
                             val user = hashMapOf(
                                 "name" to name,
                                 "lastName" to lastName,
                                 "email" to email
                             )
+                            // Save user data in Firestore with user's ID as document ID
 
                             userId?.let {
                                 db.collection("users").document(it)
                                     .set(user)
                                     .addOnSuccessListener {
-                                        navController.navigate("home")
+                                        navController.navigate("home")// Navigate to login after successful registration
                                     }
                                     .addOnFailureListener { e ->
                                         errorMessage = "Failed to save user data: ${e.message}"
