@@ -96,6 +96,7 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:2.11.2")
     implementation("com.google.android.libraries.places:places:3.2.0")
     implementation(libs.ui.text.google.fonts)
+    implementation(libs.androidx.datastore.preferences.core.jvm)
 
     // Testing
     testImplementation(libs.junit)
@@ -112,4 +113,6 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.ui:ui-tooling:1.0.5")
     implementation("androidx.compose.foundation:foundation:1.0.5")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 }

@@ -1,43 +1,44 @@
-package com.example.mymediapp.ui.screens
+package com.example.mymediapp.ui.screens.signup
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
-import com.example.compose.secondaryLight
 import com.example.mymediapp.R
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.mymediapp.factory.SignUpViewModelFactory
+import com.example.mymediapp.repository.UserRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController) {
-    var name by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
-    // Firebase Authentication and Firestore for registering and storing user data
-    val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+    val userRepository = UserRepository()
+    val signUpViewModel: SignUpViewModel = viewModel(
+        factory = SignUpViewModelFactory(userRepository)
+    )
+
+    val name by signUpViewModel.name.collectAsState()
+    val lastName by signUpViewModel.lastName.collectAsState()
+    val email by signUpViewModel.email.collectAsState()
+    val password by signUpViewModel.password.collectAsState()
+    val errorMessage by signUpViewModel.errorMessage.collectAsState()
 
     Column(
         modifier = Modifier
@@ -59,25 +60,18 @@ fun SignUpScreen(navController: NavController) {
             text = "Create your account",
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
             modifier = Modifier.align(Alignment.Start)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // First name and Last name fields
+        // Name fields
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "First name",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                TextField(
+                Text(text = "First name", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { signUpViewModel.name.value = it },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.textFieldColors(
@@ -88,16 +82,10 @@ fun SignUpScreen(navController: NavController) {
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Last name",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                TextField(
+                Text(text = "Last name", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                OutlinedTextField(
                     value = lastName,
-                    onValueChange = { lastName = it },
+                    onValueChange = { signUpViewModel.lastName.value = it },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.textFieldColors(
@@ -113,16 +101,10 @@ fun SignUpScreen(navController: NavController) {
 
         // Email field
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "E-mail",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            TextField(
+            Text(text = "E-mail", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { signUpViewModel.email.value = it },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -137,16 +119,10 @@ fun SignUpScreen(navController: NavController) {
 
         // Password field
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Password",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            TextField(
+            Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { signUpViewModel.password.value = it },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -162,44 +138,7 @@ fun SignUpScreen(navController: NavController) {
 
         // Sign up button
         Button(
-            onClick = {
-                errorMessage = ""
-                if (name.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
-                    errorMessage = "All fields are required"
-                    return@Button
-                }
-                if (password.length < 6) {
-                    errorMessage = "Password must be at least 6 characters"
-                    return@Button
-                }
-                // Registers user with email and password using Firebase Authentication
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // If registration successful, get user's ID
-                            val userId = auth.currentUser?.uid
-                            val user = hashMapOf(
-                                "name" to name,
-                                "lastName" to lastName,
-                                "email" to email
-                            )
-                            // Save user data in Firestore with user's ID as document ID
-
-                            userId?.let {
-                                db.collection("users").document(it)
-                                    .set(user)
-                                    .addOnSuccessListener {
-                                        navController.navigate("home")// Navigate to login after successful registration
-                                    }
-                                    .addOnFailureListener { e ->
-                                        errorMessage = "Failed to save user data: ${e.message}"
-                                    }
-                            }
-                        } else {
-                            errorMessage = task.exception?.message ?: "Registration failed"
-                        }
-                    }
-            },
+            onClick = { signUpViewModel.signUpUser { navController.navigate("home") } },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

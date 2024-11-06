@@ -1,48 +1,39 @@
-package com.example.mymediapp.ui.screens
+package com.example.mymediapp.ui.screens.login
 
-import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
 import com.example.mymediapp.R
+import com.example.mymediapp.factory.LoginViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val loginViewModel: LoginViewModel = viewModel(
+        factory = LoginViewModelFactory(context)
+    )
+
+    val email by loginViewModel.email.collectAsState()
+    val password by loginViewModel.password.collectAsState()
+    val rememberMe by loginViewModel.rememberMe.collectAsState()
+    val errorMessage by loginViewModel.errorMessage.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,7 +48,6 @@ fun LoginScreen(navController: NavController) {
             contentDescription = "App Logo",
             modifier = Modifier.size(150.dp)
         )
-
         Spacer(modifier = Modifier.height(32.dp))
 
         // Welcome text
@@ -65,9 +55,7 @@ fun LoginScreen(navController: NavController) {
             text = "Welcome back",
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
             modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
-
         )
 
         // Email input field
@@ -75,12 +63,11 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "E-mail",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { loginViewModel.email.value = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -100,12 +87,11 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "Password",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { loginViewModel.password.value = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -115,29 +101,38 @@ fun LoginScreen(navController: NavController) {
                     containerColor = Color.White,
                     focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
-                    unfocusedIndicatorColor = Color.Gray
+                    unfocusedIndicatorColor = Color.Black
                 )
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Remember Me Checkbox
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = rememberMe,
+                onCheckedChange = { loginViewModel.rememberMe.value = it },
+                colors = CheckboxDefaults.colors(
+                    uncheckedColor = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Remember Me",
+            )
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
 
         // Login button
         Button(
             onClick = {
-                // Firebase authentication logic
-                Log.d("Login", "Attempting to log in with email: $email")
-
-                val auth = FirebaseAuth.getInstance()
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("Login", "Login successful")
-                            navController.navigate("home")
-                        } else {
-                            errorMessage = task.exception?.message ?: "Login failed"
-                            Log.e("Login", "Login failed: ${task.exception?.message}")
-                        }
-                    }
+                loginViewModel.signInUser {
+                    navController.navigate("home")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

@@ -8,13 +8,13 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.twotone.AccountCircle
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.CalendarMonth
-import androidx.compose.material.icons.twotone.Fastfood
 import androidx.compose.material.icons.twotone.Help
 import androidx.compose.material.icons.twotone.Home
 import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material.icons.twotone.Logout
 import androidx.compose.material.icons.twotone.Medication
 import androidx.compose.material.icons.twotone.Restaurant
+import androidx.compose.material.icons.twotone.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +36,10 @@ import com.example.compose.tertiaryContainerLight
 import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.*
+import com.example.mymediapp.ui.screens.login.LoginScreen
+import com.example.mymediapp.ui.screens.settings.SettingsScreen
+import com.example.mymediapp.ui.screens.signup.SignUpScreen
+import com.example.mymediapp.ui.screens.userProfile.UserProfileScreen
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -72,7 +76,7 @@ fun AppNavigation() {
                 }
             },
             floatingActionButton = {
-                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map")) {
+                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map", "profile/{userId}")) {
                     FloatingActionButton(
                         onClick = { navController.navigate("reminder") },
                         containerColor = secondaryContainerLight) {
@@ -93,7 +97,7 @@ fun AppNavigation() {
                 composable("medications") { myMedicationsScreen(navController) }
                 composable("diet") { Diet().MealApp() }
                 composable("calendar") { MyCalendar().CalendarView(mealItems = listOf()) }
-                composable("settings") { settingScreen(navController) }
+                composable("settings") { SettingsScreen(navController) }
                 composable("profile/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId") ?: ""
                     UserProfileScreen(userId, navController)
@@ -212,6 +216,31 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
         onClick = {
             scope.launch {
                 navController.navigate("profile/{userId}")
+                drawerState.close()
+            }
+        }
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    NavigationDrawerItem(
+        icon = {
+            Icon(
+                imageVector = Icons.TwoTone.Settings,
+                contentDescription = "Settings",
+                modifier = Modifier.size(27.dp)
+            )
+        },
+        label = {
+            Text(
+                text = "Settings",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(16.dp)
+            )
+        },
+        selected = false,
+        onClick = {
+            scope.launch {
+                navController.navigate("settings")
                 drawerState.close()
             }
         }

@@ -30,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -138,7 +139,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
 
                 // Search Field
                 Text("Medicine Name", modifier = Modifier.padding(vertical = 8.dp))
-                TextField(
+                OutlinedTextField(
                     value = searchText,
                     onValueChange = {
                         searchText = it
@@ -185,8 +186,8 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Number of doses", fontSize = 16.sp)
-                        TextField(
+                        Text("Doses per day", fontSize = 16.sp)
+                        OutlinedTextField(
                             value = numberOfDoses,
                             onValueChange = { numberOfDoses = it },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -198,7 +199,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Time between doses", fontSize = 16.sp)
-                        TextField(
+                        OutlinedTextField(
                             value = timeBetweenDoses,
                             onValueChange = { input ->
                                 // Limit input to max 8 characters (two for hours, two for minutes)
@@ -211,7 +212,6 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                                     timeBetweenDoses = "${hours}h.${minutes}m"
                                 }
                             },
-                            label = { Text("__h.__m") },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                             leadingIcon = {
                                 Icon(Icons.TwoTone.Timer, contentDescription = "Time between doses")}
@@ -222,7 +222,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text("Start date", fontSize = 16.sp)
-                        TextField(
+                        OutlinedTextField(
                             value = startDate,
                             onValueChange = { },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -235,7 +235,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text("End date", fontSize = 16.sp)
-                        TextField(
+                        OutlinedTextField(
                             value = endDate,
                             onValueChange = { },
                             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -251,7 +251,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
 
                 // Start Time Field
                 Text("Start Time", fontSize = 16.sp)
-                TextField(
+                OutlinedTextField(
                     value = startTime,
                     onValueChange = { },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -264,7 +264,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text("Notes", fontSize = 16.sp)
-                TextField(
+                OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
                     modifier = Modifier.fillMaxWidth().height(120.dp).padding(vertical = 8.dp),
@@ -326,7 +326,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             navController.navigate("home") // Go back to the my medication screen
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = secondaryLightMediumContrast),
+                        //colors = ButtonDefaults.buttonColors(containerColor = secondaryLightMediumContrast),
 
                     ) {
                         Text("Add Reminder")
