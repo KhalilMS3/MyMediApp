@@ -36,7 +36,10 @@ import com.example.compose.tertiaryContainerLight
 import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.*
+import com.example.mymediapp.ui.screens.login.LoginScreen
 import com.example.mymediapp.ui.screens.settings.SettingsScreen
+import com.example.mymediapp.ui.screens.signup.SignUpScreen
+import com.example.mymediapp.ui.screens.userProfile.UserProfileScreen
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
