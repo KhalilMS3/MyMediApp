@@ -59,7 +59,6 @@ fun SignUpScreen(navController: NavController) {
             text = "Create your account",
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
             modifier = Modifier.align(Alignment.Start)
         )
 
@@ -72,10 +71,9 @@ fun SignUpScreen(navController: NavController) {
                     text = "First name",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
-                TextField(
+                OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -92,10 +90,9 @@ fun SignUpScreen(navController: NavController) {
                     text = "Last name",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
-                TextField(
+                OutlinedTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -117,10 +114,9 @@ fun SignUpScreen(navController: NavController) {
                 text = "E-mail",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -141,10 +137,9 @@ fun SignUpScreen(navController: NavController) {
                 text = "Password",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 visualTransformation = PasswordVisualTransformation(),

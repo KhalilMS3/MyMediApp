@@ -33,8 +33,15 @@ import coil.compose.rememberImagePainter
 import android.Manifest
 import android.widget.Toast
 import androidx.camera.core.Camera
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.twotone.CameraAlt
 import androidx.compose.ui.draw.clip
+import com.example.compose.backgroundLight
+import com.example.compose.errorDark
+import com.example.compose.errorLight
+import com.example.compose.secondaryLight
+import kotlinx.coroutines.delay
 import java.io.ByteArrayOutputStream
 
 @Composable
@@ -46,7 +53,6 @@ fun UserProfileScreen(userId: String, navController: NavController) {
     var name by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
     var profileImageUrl by remember { mutableStateOf<String?>(null) } // Changed to hold the image URL
 
     // Password fields
@@ -55,6 +61,10 @@ fun UserProfileScreen(userId: String, navController: NavController) {
 
     // Edit mode state
     var isEditing by remember { mutableStateOf(false) }
+
+    // Success & Error messages
+    var successMessage by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     // Camera launcher
     val launcher = rememberLauncherForActivityResult(
@@ -125,7 +135,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             } else {
                 // If no image, show camera icon
                 Icon(
-                    imageVector = Icons.Default.Camera, // Camera icon
+                    imageVector = Icons.TwoTone.CameraAlt, // Camera icon
                     contentDescription = "Camera Icon",
                     modifier = Modifier.size(48.dp) // Size of camera icon
                         .clickable { openCamera() } // Open camera on click
@@ -133,7 +143,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { openCamera() }) {
+        OutlinedButton (onClick = { openCamera() }) {
             Text("Take Profile Picture")
         }
 
@@ -141,7 +151,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         Spacer(modifier = Modifier.height(25.dp))
 
         // Editable TextFields for user data
-        TextField(
+        OutlinedTextField(
             value = name,
             onValueChange = { if (isEditing) name = it },
             label = { Text("Name") },
@@ -149,7 +159,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             enabled = isEditing // Only editable in edit mode
         )
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(
+        OutlinedTextField(
             value = lastName,
             onValueChange = { if (isEditing) lastName = it },
             label = { Text("Last Name") },
@@ -157,7 +167,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             enabled = isEditing // Only editable in edit mode
         )
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { if (isEditing) email = it },
             label = { Text("Email") },
@@ -168,7 +178,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Password change fields
-        TextField(
+        OutlinedTextField(
             value = currentPassword,
             onValueChange = { if (isEditing) currentPassword = it },
             label = { Text("Current Password") },
@@ -177,7 +187,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             enabled = isEditing // Only editable in edit mode
         )
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(
+        OutlinedTextField(
             value = newPassword,
             onValueChange = { if (isEditing) newPassword = it },
             label = { Text("New Password") },
@@ -187,14 +197,19 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        Row(){
         // Single button to toggle edit mode and save changes
-        Button(onClick = {
+        TextButton(
+            modifier = Modifier.padding(end = 10.dp),
+            onClick = {
             if (isEditing) {
                 updateProfileData(auth, db, name, lastName, email) { success, error ->
                     if (!success) {
                         errorMessage = error ?: "Error updating profile"
+                        successMessage = ""
                     } else {
-                        errorMessage = "Profile updated successfully!"
+                        successMessage = "Profile updated successfully!"
+                        errorMessage = ""
                     }
                 }
 
@@ -202,8 +217,10 @@ fun UserProfileScreen(userId: String, navController: NavController) {
                     changePassword(auth, currentPassword, newPassword) { success, error ->
                         if (!success) {
                             errorMessage = error ?: "Error changing password"
+                            successMessage = ""
                         } else {
-                            errorMessage = "Password changed successfully!"
+                            successMessage = "Password changed successfully!"
+                            errorMessage = ""
                         }
                     }
                 }
@@ -211,31 +228,50 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             // Toggle editing mode
             isEditing = !isEditing
         }) {
-            Text(if (isEditing) "Save" else "Edit")
+            Text(if (isEditing) "Save Changes" else "Edit information")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         // Button to delete account
-        Button(onClick = {
+        TextButton(
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = errorLight
+            ),
+            onClick = {
+            //TODO: Ask if sure deleting account to avoid
             deleteAccount(auth) { success, error ->
                 if (!success) {
                     errorMessage = error ?: "Error deleting account"
+                    successMessage = ""
                 } else {
-                    errorMessage = "Account deleted successfully!"
-                    navController.navigate("login") // Navigate to login screen after deletion
+                    successMessage = "Account deleted successfully!"
+                    errorMessage = ""
+                    navController.navigate("startscreen") // Navigate to login screen after deletion
                 }
             }
         }) {
             Text("Delete Account")
         }
 
-        // Error message if something goes wrong
-        if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
-        }
     }
+            if(errorMessage.isNotEmpty()){
+                LaunchedEffect(successMessage) {
+                    delay(3000) // Waiting fo 3 sec.
+                    errorMessage = "" // Removes the message after 3 sec
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+            }
+            if(successMessage.isNotEmpty()){
+                LaunchedEffect(successMessage) {
+                    delay(3000)
+                    successMessage = ""
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = successMessage)
+            }
+}
 }
 
 // Function to upload profile image to Firebase Storage

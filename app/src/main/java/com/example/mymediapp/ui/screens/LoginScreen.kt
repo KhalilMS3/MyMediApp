@@ -88,7 +88,6 @@ fun LoginScreen(navController: NavController) {
             text = "Welcome back",
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
             modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
 
         )
@@ -98,10 +97,9 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "E-mail",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 modifier = Modifier
@@ -123,10 +121,9 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "Password",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 modifier = Modifier
@@ -138,30 +135,30 @@ fun LoginScreen(navController: NavController) {
                     containerColor = Color.White,
                     focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
-                    unfocusedIndicatorColor = Color.Gray
+                    unfocusedIndicatorColor = Color.Black
                 )
             )
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
 
         // Remember Me Checkbox
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
 
         ) {
             Checkbox(
                 checked = rememberMe,
                 onCheckedChange = { rememberMe = it },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = secondaryContainerLight,
+                    //checkedColor = secondaryContainerLight,
                     uncheckedColor = Color.Gray
                 )
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Remember Me",
-                color = Color.Black,
             )
         }
 

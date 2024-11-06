@@ -46,7 +46,6 @@ fun StartScreen(navController: NavController) {
             Text(
                 text = "New member?",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
             Button(
@@ -79,7 +78,6 @@ fun StartScreen(navController: NavController) {
             Text(
                 text = "Already have an account?",
                 fontSize = 16.sp,
-                color = Color.Black,
                 modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
             Button(

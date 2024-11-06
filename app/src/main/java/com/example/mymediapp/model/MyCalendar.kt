@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.border
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowForwardIos
+import androidx.compose.material.icons.twotone.ArrowBackIosNew
+import androidx.compose.material.icons.twotone.ArrowForwardIos
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
@@ -46,7 +50,7 @@ class MyCalendar {
                         currentMonth -= 1
                     }
                 }) {
-                    Text("< Previous")
+                    Icon(Icons.TwoTone.ArrowBackIosNew, contentDescription = "Arrow back")
                 }
                 Text(
                     text = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.time),
@@ -60,7 +64,7 @@ class MyCalendar {
                         currentMonth += 1
                     }
                 }) {
-                    Text("Next >")
+                    Icon(Icons.AutoMirrored.TwoTone.ArrowForwardIos, contentDescription = "Arrow back")
                 }
             }
 
