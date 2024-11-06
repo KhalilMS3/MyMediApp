@@ -1,5 +1,6 @@
 package com.example.mymediapp.ui.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +27,15 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material3.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
 import com.example.mymediapp.R
@@ -40,9 +43,29 @@ import com.example.mymediapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
+
+
+    val context = LocalContext.current
+
+
+
+
+
+
+
+    // Setup EncryptedSharedPreferences hentet fra stack overflow just for å huske
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+
+
+
+
+    var email by rememberSaveable { mutableStateOf(sharedPreferences.getString("email", "") ?: "") }
+    var password by rememberSaveable { mutableStateOf(sharedPreferences.getString("password", "") ?: "") }
+    var errorMessage by rememberSaveable { mutableStateOf("") }
+    var rememberMe by rememberSaveable { mutableStateOf(sharedPreferences.getBoolean("rememberMe", false)) }
+
+
 
     Column(
         modifier = Modifier
@@ -121,6 +144,31 @@ fun LoginScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(32.dp))
 
+
+        // Remember Me Checkbox
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+
+        ) {
+            Checkbox(
+                checked = rememberMe,
+                onCheckedChange = { rememberMe = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = secondaryContainerLight,
+                    uncheckedColor = Color.Gray
+                )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Remember Me",
+                color = Color.Black,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp)
+        )
+
+
         // Login button
         Button(
             onClick = {
@@ -132,6 +180,22 @@ fun LoginScreen(navController: NavController) {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.d("Login", "Login successful")
+
+                            // Save login info user clicked on  "Remember Me"  box (is checked)
+                            with(sharedPreferences.edit()) {
+                                if (rememberMe) {
+                                    putString("email", email)
+                                    putString("password", password)
+                                    putBoolean("rememberMe", true)
+                                } else {
+                                    // Clear email if "Remember Me" is unchecked
+                                    remove("email")
+                                    remove("password")
+                                    putBoolean("rememberMe", false)
+                                }
+                                apply()
+                            }
+
                             navController.navigate("home")
                         } else {
                             errorMessage = task.exception?.message ?: "Login failed"
