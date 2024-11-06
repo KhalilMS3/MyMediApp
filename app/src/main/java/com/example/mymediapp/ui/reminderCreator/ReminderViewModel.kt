@@ -15,25 +15,34 @@ import com.example.mymediapp.model.MedicineResponse
 import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.network.MedicineApiService
 import com.example.mymediapp.network.RetrofitInstance
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
+
+
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.*
 
 
 class ReminderViewModel : ViewModel() {
 
+    // Initialize FirebaseAuth
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    // Firestore instance
+    private val db = FirebaseFirestore.getInstance()
+
     // LiveData for medicine search results
     private val _medicineResults = MutableLiveData<List<MedicineResponse>>()
     val medicineResults: LiveData<List<MedicineResponse>> = _medicineResults
+
 
     // LiveData for list of saved reminders
     private val _reminders = MutableLiveData<List<Reminder>>(emptyList())
     val reminders: LiveData<List<Reminder>> get() = _reminders
     private val _medications = MutableLiveData<List<Reminder>>(emptyList())
     val medications: LiveData<List<Reminder>> = _medications
+    //private val context = getApplication<Application>().applicationContext                              //10
 
 
     fun parseTimeBetweenDoses(timeString: String): Pair<Int, Int> {
@@ -63,6 +72,8 @@ class ReminderViewModel : ViewModel() {
 
     // Function to add a reminder
     fun addReminder(reminder: Reminder) {
+
+        val userId = auth.currentUser?.uid
         Log.d("ReminderViewModel", "Attempting to add reminder:$reminder")
 
         val updatedReminders = _reminders.value?.toMutableList() ?: mutableListOf()
@@ -74,12 +85,116 @@ class ReminderViewModel : ViewModel() {
 
         // Log the current list of reminders
         Log.d("ReminderViewModel", "Current list of reminders: $updatedReminders")
+        // Save to Firestore
+        saveReminderToFirestore(reminder)
     }
 
     fun addMedication(reminder: Reminder) {
         val updatedList = _medications.value?.toMutableList() ?: mutableListOf()
         updatedList.add(reminder)
         _medications.value = updatedList
+    }
+
+    private fun saveReminderToFirestore(reminder: Reminder) {
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            val reminderId = UUID.randomUUID().toString() // Generate a unique ID for the reminder
+
+            db.collection("users")
+                .document(userId)
+                .collection("reminders")
+                .document(reminderId)
+                .set(reminder)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Reminder saved successfully.")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error saving reminder", e)
+                }
+        } else {
+            Log.w("Firestore", "User not authenticated. Cannot save reminder.")
+            // Optionally, handle unauthenticated state (e.g., prompt login)
+        }
+    }
+
+    fun updateReminder(reminderId: String, updatedReminder: Reminder) {
+        // Update the local list
+        val updatedReminders = _reminders.value?.map {
+            if (it.id == reminderId) updatedReminder else it
+        } ?: listOf(updatedReminder)
+        _reminders.value = updatedReminders
+
+        // Update in Firestore
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            db.collection("users")
+                .document(userId)
+                .collection("reminders")
+                .document(reminderId)
+                .set(updatedReminder)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Reminder updated successfully.")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error updating reminder", e)
+                }
+        }
+    }
+
+    fun fetchReminders() {
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            db.collection("users")
+                .document(userId)
+                .collection("reminders")
+                .addSnapshotListener { snapshots, e ->
+                    if (e != null) {
+                        Log.w("Firestore", "Listen failed.", e)
+                        return@addSnapshotListener
+                    }
+
+                    if (snapshots != null) {
+                        val reminderList = snapshots.documents.mapNotNull { doc ->
+                            doc.toObject(Reminder::class.java)
+                        }
+                        _reminders.postValue(reminderList)
+                    }
+                }
+        } else {
+            Log.w("Firestore", "User not authenticated. Cannot fetch reminders.")
+        }
+    }
+    // Initialize Firestore settings if needed
+    init {
+        fetchReminders()
+    }
+
+    fun deleteReminder(reminderId: String) {
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            // Remove from local list
+            val updatedReminders = _reminders.value?.filter { it.id != reminderId }
+            _reminders.value = updatedReminders!!
+
+            // Remove from Firestore
+            db.collection("users")
+                .document(userId)
+                .collection("reminders")
+                .document(reminderId)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Reminder deleted successfully.")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error deleting reminder", e)
+                }
+        } else {
+            Log.w("Firestore", "User not authenticated. Cannot delete reminder.")
+            // Optionally, handle unauthenticated state
+        }
     }
 
 
