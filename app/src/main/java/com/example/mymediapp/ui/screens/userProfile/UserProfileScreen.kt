@@ -52,7 +52,28 @@ fun UserProfileScreen(userId: String, navController: NavController) {
     val successMessage by viewModel.successMessage.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
 
+    //State to manage the dialog for errorMessages
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+
+
     val scope = rememberCoroutineScope()
+
+
+
+    if (errorMessage.isNotEmpty()) {
+        showErrorDialog = true
+    }
+
+    //Show success dialog when successMessage is not empty
+    if (successMessage.isNotEmpty()) {
+        showSuccessDialog = true
+    }
+
+
+
+
     //Launcher for camera opening and getting a image
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -65,6 +86,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             }
         }
     }
+
     //Function for camera opening
     fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -177,33 +199,72 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 onClick = {
-                    scope.launch {
-                        viewModel.deleteAccount {
-                            navController.navigate("startscreen")
-                        }
-                    }
+                    // Shows confirmation dialog
+                    showDeleteDialog = true
                 }
             ) {
                 Text("Delete Account")
             }
-        }
 
-        if (errorMessage.isNotEmpty()) {
-            LaunchedEffect(errorMessage) {
-                kotlinx.coroutines.delay(3000)
-                viewModel.errorMessage.value = ""
+            //Show Delete Confirmation Dialog
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showDeleteDialog = false
+                    }, //Close dialog on outside touch
+                    title = { Text("Delete Account") },
+                    text = { Text("Are you sure you want to delete your account?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                scope.launch {
+                                    viewModel.deleteAccount {
+                                        navController.navigate("startscreen")
+                                    }
+                                }
+                                showDeleteDialog = false
+                            }
+                        ) {
+                            Text("Yes")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showDeleteDialog = false }
+                        ) {
+                            Text("No")
+                        }
+                    }
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
-        }
 
-        if (successMessage.isNotEmpty()) {
-            LaunchedEffect(successMessage) {
-                kotlinx.coroutines.delay(3000)
-                viewModel.successMessage.value = ""
+            //Show error message dialog
+            if (showErrorDialog) {
+                AlertDialog(
+                    onDismissRequest = { showErrorDialog = false },
+                    title = { Text("Error") },
+                    text = { Text(errorMessage) },
+                    confirmButton = {
+                        TextButton(onClick = { showErrorDialog = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = successMessage)
+
+            //Show success message dialog
+            if (showSuccessDialog) {
+                AlertDialog(
+                    onDismissRequest = { showSuccessDialog = false },
+                    title = { Text("Success") },
+                    text = { Text(successMessage) },
+                    confirmButton = {
+                        TextButton(onClick = { showSuccessDialog = false }) {
+
+                        }
+                    }
+                )
+            }
         }
     }
 }
