@@ -33,9 +33,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.secondaryContainerLight
 import com.example.compose.secondaryLight
 import com.example.compose.tertiaryContainerLight
-import com.example.mymediapp.model.Diet
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.*
+import com.example.mymediapp.ui.screens.deit.DietScreen
 import com.example.mymediapp.ui.screens.login.LoginScreen
 import com.example.mymediapp.ui.screens.settings.SettingsScreen
 import com.example.mymediapp.ui.screens.signup.SignUpScreen
@@ -95,7 +95,7 @@ fun AppNavigation() {
                 composable("home") { homeScreen(navController) }
                 composable("reminder") { ReminderScreen(navController) }
                 composable("medications") { myMedicationsScreen(navController) }
-                composable("diet") { Diet().MealApp() }
+                composable("diet") { DietScreen(navController) }
                 composable("calendar") { MyCalendar().CalendarView(mealItems = listOf()) }
                 composable("settings") { SettingsScreen(navController) }
                 composable("profile/{userId}") { backStackEntry ->
