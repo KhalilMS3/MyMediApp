@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel(private val userRepository: UserProfileRepository) : ViewModel() {
+    // MutableStateFlows for hold user data and other UI
     val name = MutableStateFlow("")
     val lastName = MutableStateFlow("")
     val email = MutableStateFlow("")
@@ -17,11 +18,13 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
     val isEditing = MutableStateFlow(false)
 
     init {
+        //Fetching profile data from repository
         fetchProfileData()
     }
-
+    // Fetching user-profile-data from the repository and updates the stateflows
     private fun fetchProfileData() {
         viewModelScope.launch {
+            // Fetch profile data from repository
             val result = userRepository.fetchProfileData()
             if (result.isSuccess) {
                 val data = result.getOrNull() ?: return@launch
@@ -34,9 +37,10 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
             }
         }
     }
-
+    //Update profile data function to update
     fun updateProfileData() {
         viewModelScope.launch {
+            // Call repository to update the profile
             val result = userRepository.updateProfileData(name.value, lastName.value, email.value)
             if (result.isSuccess) {
                 successMessage.value = "Profile updated successfully!"
@@ -45,7 +49,7 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
             }
         }
     }
-
+    //Function to change the password
     fun changePassword(currentPassword: String, newPassword: String) {
         viewModelScope.launch {
             val result = userRepository.changePassword(currentPassword, newPassword)
@@ -56,7 +60,7 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
             }
         }
     }
-
+    //Function to delete the account
     fun deleteAccount(onAccountDeleted: () -> Unit) {
         viewModelScope.launch {
             val result = userRepository.deleteAccount()
@@ -68,9 +72,10 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
             }
         }
     }
-
+    //Function to upload a new profile image
     fun uploadProfileImage(image: Bitmap) {
         viewModelScope.launch {
+            // Get the current users-ID
             val userId = userRepository.auth.currentUser?.uid ?: return@launch
             val result = userRepository.uploadProfileImage(image)
             if (result.isSuccess) {

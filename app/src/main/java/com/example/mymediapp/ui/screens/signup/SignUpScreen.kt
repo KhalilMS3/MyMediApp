@@ -28,18 +28,18 @@ import com.example.mymediapp.repository.UserRepository
 @Composable
 fun SignUpScreen(navController: NavController) {
     val context = LocalContext.current
-
+    //Initialize UserRepository and SignUpViewModel with factory
     val userRepository = UserRepository()
     val signUpViewModel: SignUpViewModel = viewModel(
         factory = SignUpViewModelFactory(userRepository)
     )
-
+    //State values from the ViewModel
     val name by signUpViewModel.name.collectAsState()
     val lastName by signUpViewModel.lastName.collectAsState()
     val email by signUpViewModel.email.collectAsState()
     val password by signUpViewModel.password.collectAsState()
     val errorMessage by signUpViewModel.errorMessage.collectAsState()
-
+    //Layout
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,7 +47,7 @@ fun SignUpScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo and title
+        //Logo and title
         Image(
             painter = painterResource(id = R.drawable.mymedi_full_green),
             contentDescription = "App Logo",
@@ -65,11 +65,12 @@ fun SignUpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Name fields
+        //Name fields
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "First name", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 OutlinedTextField(
+                    // Value from ViewModel
                     value = name,
                     onValueChange = { signUpViewModel.name.value = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -81,9 +82,11 @@ fun SignUpScreen(navController: NavController) {
                     )
                 )
             }
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "Last name", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 OutlinedTextField(
+                    // Value from ViewModel
                     value = lastName,
                     onValueChange = { signUpViewModel.lastName.value = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -99,7 +102,7 @@ fun SignUpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Email field
+        //Email field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = "E-mail", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
             OutlinedTextField(
@@ -117,7 +120,7 @@ fun SignUpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password field
+        //Password field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
             OutlinedTextField(
@@ -136,7 +139,7 @@ fun SignUpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Sign up button
+        //Sign up button
         Button(
             onClick = { signUpViewModel.signUpUser { navController.navigate("home") } },
             modifier = Modifier
@@ -156,7 +159,7 @@ fun SignUpScreen(navController: NavController) {
             )
         }
 
-        // Error message if there is one
+        //Error message if there is one
         if (errorMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(

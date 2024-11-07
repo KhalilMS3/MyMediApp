@@ -25,16 +25,17 @@ import com.example.mymediapp.factory.LoginViewModelFactory
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
-
+    //State from ViewModel using the factory
     val loginViewModel: LoginViewModel = viewModel(
         factory = LoginViewModelFactory(context)
     )
-
+    //State from ViewModel using in the UI
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val rememberMe by loginViewModel.rememberMe.collectAsState()
     val errorMessage by loginViewModel.errorMessage.collectAsState()
 
+    //Layout
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +43,7 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Logo
+        //Logo
         Image(
             painter = painterResource(id = R.drawable.mymedi_full_green),
             contentDescription = "App Logo",
@@ -50,7 +51,7 @@ fun LoginScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Welcome text
+        //Welcome text
         Text(
             text = "Welcome back",
             fontSize = 24.sp,
@@ -58,7 +59,7 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
         )
 
-        // Email input field
+        //Email input field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "E-mail",
@@ -82,7 +83,7 @@ fun LoginScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password input field
+        //Password input field
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Password",
@@ -107,7 +108,7 @@ fun LoginScreen(navController: NavController) {
         }
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Remember Me Checkbox
+        //Remember Me Checkbox
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
@@ -127,7 +128,7 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Login button
+        //Login button
         Button(
             onClick = {
                 loginViewModel.signInUser {
@@ -150,7 +151,7 @@ fun LoginScreen(navController: NavController) {
             )
         }
 
-        // Error message
+        //Error message
         if (errorMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(

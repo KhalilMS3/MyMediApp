@@ -38,11 +38,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreen(userId: String, navController: NavController) {
+    //Initializing UserRepository and ViewModel with factory
     val userRepository = UserProfileRepository()
     val viewModel: UserProfileViewModel = viewModel(
         factory = UserProfileViewModelFactory(userRepository)
     )
-
+    //State values from ViewModel
     val name by viewModel.name.collectAsState()
     val lastName by viewModel.lastName.collectAsState()
     val email by viewModel.email.collectAsState()
@@ -52,17 +53,19 @@ fun UserProfileScreen(userId: String, navController: NavController) {
     val isEditing by viewModel.isEditing.collectAsState()
 
     val scope = rememberCoroutineScope()
+    //Launcher for camera opening and getting a image
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as? Bitmap
             imageBitmap?.let {
+                //Uploading image
                 viewModel.uploadProfileImage(it)
             }
         }
     }
-
+    //Function for camera opening
     fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         launcher.launch(intent)
@@ -105,7 +108,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         Text(text = "Profile", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(25.dp))
 
-        // Editable TextFields for user data
+        //Editable TextFields for user data
         OutlinedTextField(
             value = name,
             onValueChange = { if (isEditing) viewModel.name.value = it },
@@ -131,7 +134,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password change fields
+        //Password change fields
         var currentPassword by remember { mutableStateOf("") }
         var newPassword by remember { mutableStateOf("") }
 
@@ -155,6 +158,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row {
+            //Save editing
             TextButton(
                 modifier = Modifier.padding(end = 10.dp),
                 onClick = {
@@ -169,7 +173,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             ) {
                 Text(if (isEditing) "Save Changes" else "Edit information")
             }
-
+            //Delete Account button
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 onClick = {

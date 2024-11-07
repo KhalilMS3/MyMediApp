@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mymediapp.repository.UserProfileRepository
 import com.example.mymediapp.ui.screens.userProfile.UserProfileViewModel
 
+//Factory class for creating fo UserprofileViewModel
 class UserProfileViewModelFactory(private val userRepository: UserProfileRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(UserProfileViewModel::class.java)) {

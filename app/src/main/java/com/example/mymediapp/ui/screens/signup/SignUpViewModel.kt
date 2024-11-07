@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(private val userRepository: UserRepository) : ViewModel() {
-
+    //MutableStateFlow for hold user input for name, last name, email, and password
     val name = MutableStateFlow("")
     val lastName = MutableStateFlow("")
     val email = MutableStateFlow("")
@@ -22,10 +22,12 @@ class SignUpViewModel(private val userRepository: UserRepository) : ViewModel() 
                 _errorMessage.value = "All fields are required"
                 return@launch
             }
+            //Checking password length is less than 6 character
             if (password.value.length < 6) {
-                _errorMessage.value = "Password must be at least 6 characters"
+                _errorMessage.value = "The Password must be at least 6 characters"
                 return@launch
             }
+            //Try to create a user using the UserRepository
             val result = userRepository.createUser(email.value, password.value, name.value, lastName.value)
             if (result.isSuccess) {
                 onSuccess()

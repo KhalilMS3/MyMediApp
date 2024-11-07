@@ -1,4 +1,4 @@
-package com.example.mymediapp.data
+/*package com.example.mymediapp.data
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -122,3 +122,4 @@ fun SignUpScreen(navController: NavController) {
         }
     }
 }
+*/
