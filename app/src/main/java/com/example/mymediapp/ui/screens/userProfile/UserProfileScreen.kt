@@ -62,13 +62,17 @@ fun UserProfileScreen(userId: String, navController: NavController) {
 
 
 
-    if (errorMessage.isNotEmpty()) {
-        showErrorDialog = true
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.isNotEmpty()) {
+            showErrorDialog = true
+        }
     }
 
-    //Show success dialog when successMessage is not empty
-    if (successMessage.isNotEmpty()) {
-        showSuccessDialog = true
+    //Show success dialog if successMessage is not empty
+    LaunchedEffect(successMessage) {
+        if (successMessage.isNotEmpty()) {
+            showSuccessDialog = true
+        }
     }
 
 
@@ -241,26 +245,30 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             //Show error message dialog
             if (showErrorDialog) {
                 AlertDialog(
-                    onDismissRequest = { showErrorDialog = false },
+                    onDismissRequest = { showErrorDialog = false }, // Lukker dialogen hvis man trykker utenfor
                     title = { Text("Error") },
                     text = { Text(errorMessage) },
                     confirmButton = {
-                        TextButton(onClick = { showErrorDialog = false }) {
+                        TextButton(onClick = {
+                            showErrorDialog = false // Setter til false for å lukke dialogen
+                        }) {
                             Text("OK")
                         }
                     }
                 )
             }
 
-            //Show success message dialog
+        // Show success message dialog
             if (showSuccessDialog) {
                 AlertDialog(
-                    onDismissRequest = { showSuccessDialog = false },
+                    onDismissRequest = { showSuccessDialog = false }, // Lukker dialogen hvis man trykker utenfor
                     title = { Text("Success") },
                     text = { Text(successMessage) },
                     confirmButton = {
-                        TextButton(onClick = { showSuccessDialog = false }) {
-
+                        TextButton(onClick = {
+                            showSuccessDialog = false // Setter til false for å lukke dialogen
+                        }) {
+                            Text("OK")
                         }
                     }
                 )
