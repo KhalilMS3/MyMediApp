@@ -35,6 +35,30 @@ fun LoginScreen(navController: NavController) {
     val rememberMe by loginViewModel.rememberMe.collectAsState()
     val errorMessage by loginViewModel.errorMessage.collectAsState()
 
+
+    //Dialog visibility
+    var showDialog by remember { mutableStateOf(false) }
+
+    //Show dialog if there is any error message
+    if (errorMessage.isNotEmpty() && showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(text = "Error")
+            },
+            text = {
+                Text(text = errorMessage)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
+
     //Layout
     Column(
         modifier = Modifier
@@ -134,6 +158,10 @@ fun LoginScreen(navController: NavController) {
                 loginViewModel.signInUser {
                     navController.navigate("home")
                 }
+                if (errorMessage.isNotEmpty()) {
+                    showDialog = true
+                }
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -151,13 +179,5 @@ fun LoginScreen(navController: NavController) {
             )
         }
 
-        //Error message
-        if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error
-            )
-        }
     }
 }

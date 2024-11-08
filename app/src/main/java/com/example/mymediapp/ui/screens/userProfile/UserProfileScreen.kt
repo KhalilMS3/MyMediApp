@@ -203,7 +203,7 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 onClick = {
-                    // Shows confirmation dialog
+                    //Shows confirmation dialog
                     showDeleteDialog = true
                 }
             ) {
@@ -245,12 +245,12 @@ fun UserProfileScreen(userId: String, navController: NavController) {
             //Show error message dialog
             if (showErrorDialog) {
                 AlertDialog(
-                    onDismissRequest = { showErrorDialog = false }, // Lukker dialogen hvis man trykker utenfor
+                    onDismissRequest = { showErrorDialog = false },
                     title = { Text("Error") },
                     text = { Text(errorMessage) },
                     confirmButton = {
                         TextButton(onClick = {
-                            showErrorDialog = false // Setter til false for å lukke dialogen
+                            showErrorDialog = false
                         }) {
                             Text("OK")
                         }
@@ -258,15 +258,15 @@ fun UserProfileScreen(userId: String, navController: NavController) {
                 )
             }
 
-        // Show success message dialog
+        //Show success message dialog
             if (showSuccessDialog) {
                 AlertDialog(
-                    onDismissRequest = { showSuccessDialog = false }, // Lukker dialogen hvis man trykker utenfor
+                    onDismissRequest = { showSuccessDialog = false },
                     title = { Text("Success") },
                     text = { Text(successMessage) },
                     confirmButton = {
                         TextButton(onClick = {
-                            showSuccessDialog = false // Setter til false for å lukke dialogen
+                            showSuccessDialog = false
                         }) {
                             Text("OK")
                         }
