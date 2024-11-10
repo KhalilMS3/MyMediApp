@@ -7,6 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +42,11 @@ fun SignUpScreen(navController: NavController) {
     val email by signUpViewModel.email.collectAsState()
     val password by signUpViewModel.password.collectAsState()
     val errorMessage by signUpViewModel.errorMessage.collectAsState()
+    //Dialogs view
+    var showDialog by remember { mutableStateOf(false) }
+
+
+
     //Layout
     Column(
         modifier = Modifier
@@ -70,7 +78,7 @@ fun SignUpScreen(navController: NavController) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "First name", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 OutlinedTextField(
-                    // Value from ViewModel
+                    //Value from ViewModel
                     value = name,
                     onValueChange = { signUpViewModel.name.value = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -141,7 +149,14 @@ fun SignUpScreen(navController: NavController) {
 
         //Sign up button
         Button(
-            onClick = { signUpViewModel.signUpUser { navController.navigate("home") } },
+            onClick = {
+                signUpViewModel.signUpUser {
+                    navController.navigate("home")
+                }
+                if (errorMessage.isNotEmpty()) {
+                    showDialog = true
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -158,15 +173,20 @@ fun SignUpScreen(navController: NavController) {
                 fontWeight = FontWeight.SemiBold
             )
         }
-
-        //Error message if there is one
-        if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.Start)
+        //Show dialog if there is any error message
+        if (errorMessage.isNotEmpty() && showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "Error") },
+                text = { Text(text = errorMessage) },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text(text = "OK")
+                    }
+                }
             )
         }
+
+
     }
 }
