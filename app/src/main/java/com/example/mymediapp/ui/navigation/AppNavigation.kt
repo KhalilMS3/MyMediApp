@@ -56,7 +56,9 @@ fun AppNavigation() {
             ModalDrawerSheet {
                 DrawerContent(navController = navController, drawerState = drawerState)
             }
-        }
+        },
+        gesturesEnabled = false
+
     ) {
         Scaffold(
             topBar = {
@@ -76,7 +78,7 @@ fun AppNavigation() {
                 }
             },
             floatingActionButton = {
-                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map", "profile/{userId}")) {
+                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map", "profile/{userId}", "AboutUs")) {
                     FloatingActionButton(
                         onClick = { navController.navigate("reminder") },
                         containerColor = secondaryContainerLight) {
