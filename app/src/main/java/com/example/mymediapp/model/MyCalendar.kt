@@ -1,4 +1,3 @@
-// MyCalendar.kt
 package com.example.mymediapp.model
 
 import androidx.compose.foundation.background
