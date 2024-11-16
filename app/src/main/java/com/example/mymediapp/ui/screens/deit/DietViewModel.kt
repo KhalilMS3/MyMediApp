@@ -1,5 +1,6 @@
 package com.example.mymediapp.ui.screens.deit
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,10 +8,6 @@ import com.example.mymediapp.model.MealItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import java.text.SimpleDateFormat
-import java.util.*
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObject
 
 class DietViewModel : ViewModel() {
 
@@ -31,7 +28,10 @@ class DietViewModel : ViewModel() {
     }
 
     private fun getUserId(): String {
-        return FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
+        return FirebaseAuth.getInstance().currentUser?.uid ?: run {
+            Log.e("DietViewModel", "User ID is null. Using defaultUserId.")
+            "defaultUserId"
+        }
     }
 
 
@@ -43,12 +43,18 @@ class DietViewModel : ViewModel() {
         getMealCollection()
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
-                    //Dilbrin Nav: Handle error
+                    //: Handle error
+                    Log.e("DietViewModel", "Error fetching meal items: ${e.message}", e)
                     return@addSnapshotListener
                 }
                 if (snapshots != null) {
                     val meals = snapshots.documents.mapNotNull { it.toObject(MealItem::class.java) }
                     _mealItems.postValue(meals)
+                    // Calculate calories when new data is fetched
+                    calculateCaloriesPerDay(meals)
+                } else {
+                    Log.w("DietViewModel", "Snapshot is null.")
+
                 }
             }
     }
@@ -58,10 +64,11 @@ class DietViewModel : ViewModel() {
             .document(mealItem.id)
             .set(mealItem)
             .addOnSuccessListener {
-                // Dilbrin Nav:  Meal item added successfully
+                Log.d("DietViewModel", "Meal item added successfully: ${mealItem.id}")
             }
             .addOnFailureListener { e ->
-                //Dilbrin Nav: Handle error
+                Log.e("DietViewModel", "Error adding meal item: ${e.message}", e)
+
             }
     }
 
@@ -70,10 +77,11 @@ class DietViewModel : ViewModel() {
             .document(mealItemId)
             .delete()
             .addOnSuccessListener {
-                //Dilbrin Nav: Meal item deleted successfully
+                Log.d("DietViewModel", "Meal item deleted successfully: $mealItemId")
             }
             .addOnFailureListener { e ->
-                //Dilbrin Nav: Handle error
+                Log.e("DietViewModel", "Error deleting meal item: ${e.message}", e)
+
             }
     }
 
@@ -83,8 +91,10 @@ class DietViewModel : ViewModel() {
             .set(mealItem)
             .addOnSuccessListener {
                 // Optionally notify success
+                Log.d("DietViewModel", "Meal item updated successfully: ${mealItem.id}")
             }
             .addOnFailureListener { e ->
+                Log.e("DietViewModel", "Error updating meal item: ${e.message}", e)
                 // Handle failure
             }
     }
