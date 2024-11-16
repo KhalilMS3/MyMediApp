@@ -2,7 +2,10 @@ package com.example.mymediapp.ui.navigation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.twotone.AccountCircle
@@ -15,7 +18,22 @@ import androidx.compose.material.icons.twotone.Logout
 import androidx.compose.material.icons.twotone.Medication
 import androidx.compose.material.icons.twotone.Restaurant
 import androidx.compose.material.icons.twotone.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,10 +51,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.secondaryContainerLight
 import com.example.compose.secondaryLight
 import com.example.compose.tertiaryContainerLight
-import com.example.mymediapp.model.MyCalendar
-import com.example.mymediapp.ui.screens.*
+import com.example.mymediapp.ui.screens.AboutUsScreen
+import com.example.mymediapp.ui.screens.CalendarScreen
+import com.example.mymediapp.ui.screens.MapScreenContent
+import com.example.mymediapp.ui.screens.ReminderScreen
+import com.example.mymediapp.ui.screens.StartScreen
 import com.example.mymediapp.ui.screens.deit.DietScreen
+import com.example.mymediapp.ui.screens.homeScreen
 import com.example.mymediapp.ui.screens.login.LoginScreen
+import com.example.mymediapp.ui.screens.myMedicationsScreen
 import com.example.mymediapp.ui.screens.settings.SettingsScreen
 import com.example.mymediapp.ui.screens.signup.SignUpScreen
 import com.example.mymediapp.ui.screens.userProfile.UserProfileScreen
@@ -98,7 +121,7 @@ fun AppNavigation() {
                 composable("reminder") { ReminderScreen(navController) }
                 composable("medications") { myMedicationsScreen(navController) }
                 composable("diet") { DietScreen(navController) }
-                composable("calendar") { MyCalendar().CalendarView(mealItems = listOf()) }
+                composable("calendar") { CalendarScreen(navController) }
                 composable("settings") { SettingsScreen(navController) }
                 composable("profile/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId") ?: ""
