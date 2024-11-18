@@ -198,7 +198,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Time between doses", fontSize = 16.sp)
+                        Text("Time between doses >= 1h", fontSize = 16.sp)
                         OutlinedTextField(
                             value = timeBetweenDoses,
                             onValueChange = { input ->
