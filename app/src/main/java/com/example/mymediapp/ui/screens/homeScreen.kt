@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,24 +28,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun homeScreen(navController: NavController, viewModel: ReminderViewModel = viewModel()) {
 
-    //Fetching reminders list form viewModel
+    // Fetching reminders list from viewModel
     val reminders by viewModel.reminders.observeAsState(emptyList())
-    //Firebase auth and firestore
+    // Firebase auth and firestore
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
     var userName by remember { mutableStateOf("") }
 
-
-
     LaunchedEffect(Unit) {
         val userId = auth.currentUser?.uid
         if (userId != null) {
-            // Fetch user information from firestore
+            // Fetch user information from Firestore
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
-                        //Get the username from firestore document
-                        val fetchedName = document.getString("name") ?:""
+                        // Get the username from Firestore document
+                        val fetchedName = document.getString("name") ?: ""
                         userName = fetchedName
                     }
                 }
@@ -55,38 +54,59 @@ fun homeScreen(navController: NavController, viewModel: ReminderViewModel = view
         }
     }
 
-    Spacer(modifier = Modifier.height(20.dp))
-// Layout to display the medicines
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(
-            text = "Hei, $userName",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
-        Text(
-            text = "Kommende medisiner",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Header Section
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Hei, $userName",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+            Text(
+                text = "Kommende medisiner",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
+        // Content Section
         if (reminders.isEmpty()) {
-            Text("Ingen kommende medisiner")
-        } else {
-            LazyColumn {
-                items(reminders) { reminder ->
-                    MedicineItem(reminder)
-                }
+            item {
+                Text("Ingen kommende medisiner")
             }
+        } else {
+            items(reminders) { reminder ->
+                MedicineItem(reminder)
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
 fun MedicineItem(reminder: Reminder) {
-// Simple display for each medicine in the list
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = reminder.medicineName, style = MaterialTheme.typography.headlineSmall)
-            Text(text = "Neste dose: ${reminder.startTime.hours}:${reminder.startTime.minutes}")
+            Text(
+                text = reminder.medicineName,
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = "Neste dose: ${reminder.startTime.hours}:${reminder.startTime.minutes}",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

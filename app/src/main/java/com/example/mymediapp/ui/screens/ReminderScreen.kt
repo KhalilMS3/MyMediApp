@@ -313,18 +313,17 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                             val reminder = Reminder(
                                 medicineName = selectedMedicine,
                                 numberOfDoses = doses,
-                                timeBetweenDoses = timeBetweenDosesInt,
-                                startDate = startDateParsed,  // Change to Date type
-                                endDate = endDateParsed,      // Change to Date type
+                                timeBetweenDosesString = timeBetweenDoses,
+                                startDate = startDateParsed,
+                                endDate = endDateParsed,
                                 startTime = startTimeParsed,
                                 notes = notes
                             )
                             viewModel.addReminder(reminder)
-                            viewModel.scheduleReminders(reminder, context)
-
                             Toast.makeText(context, "Reminder created", Toast.LENGTH_SHORT).show()
-                            navController.navigate("home") // Go back to the my medication screen
-                        },
+                            navController.navigate("home")
+                        },// Go back to the my medication screen
+
                         modifier = Modifier.weight(1f),
                         //colors = ButtonDefaults.buttonColors(containerColor = secondaryLightMediumContrast),
 

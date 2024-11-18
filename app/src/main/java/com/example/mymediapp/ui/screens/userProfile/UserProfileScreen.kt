@@ -34,6 +34,11 @@ import com.example.mymediapp.factory.UserProfileViewModelFactory
 import com.example.mymediapp.repository.UserProfileRepository
 import com.example.mymediapp.ui.screens.userProfile.UserProfileViewModel
 import kotlinx.coroutines.launch
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +56,9 @@ fun UserProfileScreen(userId: String, navController: NavController) {
     val errorMessage by viewModel.errorMessage.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
     val isEditing by viewModel.isEditing.collectAsState()
+
+
+    val context = LocalContext.current
 
     //State to manage the dialog for errorMessages
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -78,24 +86,57 @@ fun UserProfileScreen(userId: String, navController: NavController) {
 
 
 
-    //Launcher for camera opening and getting a image
+    // Launcher for camera opening and getting an image
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as? Bitmap
             imageBitmap?.let {
-                //Uploading image
+                // Uploading image
                 viewModel.uploadProfileImage(it)
             }
         }
     }
-
-    //Function for camera opening
-    fun openCamera() {
+    fun openCameraLauncher() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         launcher.launch(intent)
     }
+
+    // Launcher for requesting CAMERA permission
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission Granted, open the camera
+            openCameraLauncher()
+        } else {
+            // Permission Denied, show a message or handle accordingly
+            showErrorDialog = true
+            viewModel.setErrorMessage("Camera permission is required to take profile pictures.")
+        }
+    }
+
+    // Function to open the camera intent
+    val openCameraLauncher = {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        launcher.launch(intent)
+    }
+
+    // Function for camera opening
+    fun openCamera() {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
+                // Permission already granted, open the camera
+                openCameraLauncher()
+            }
+            else -> {
+                // Request the permission
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier

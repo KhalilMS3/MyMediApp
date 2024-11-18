@@ -7,10 +7,7 @@ import com.example.mymediapp.model.MealItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import java.text.SimpleDateFormat
-import java.util.*
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.toObject
+
 
 class DietViewModel : ViewModel() {
 
@@ -20,11 +17,8 @@ class DietViewModel : ViewModel() {
     val mealItems: LiveData<List<MealItem>> get() = _mealItems
 
     // LiveData for total calories per day
-    private val _caloriesPerDay = MutableLiveData<Map<String, Int>>()
-    val caloriesPerDay: LiveData<Map<String, Int>> get() = _caloriesPerDay
 
 
-    private var listenerRegistration: ListenerRegistration? = null
 
     init {
         fetchMealItems()
@@ -89,16 +83,6 @@ class DietViewModel : ViewModel() {
             }
     }
 
-    // Calculate total calories per day
-    private fun calculateCaloriesPerDay(meals: List<MealItem>) {
-        val caloriesMap = meals.groupingBy { it.date }.fold(0) { acc, meal -> acc + meal.calories }
-        _caloriesPerDay.postValue(caloriesMap)
-    }
-
-   /* override fun onCleared() {
-        super.onCleared()
-        listenerRegistration?.remove()
-    }*/
 
 
 }

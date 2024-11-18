@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mymediapp.repository.UserProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 
 class UserProfileViewModel(private val userRepository: UserProfileRepository) : ViewModel() {
     // MutableStateFlows for hold user data and other UI
@@ -16,6 +17,13 @@ class UserProfileViewModel(private val userRepository: UserProfileRepository) : 
     val errorMessage = MutableStateFlow("")
     val successMessage = MutableStateFlow("")
     val isEditing = MutableStateFlow(false)
+    private val _errorMessage = MutableStateFlow("")
+    //val errorMessage: StateFlow<String> = _errorMessage
+
+    fun setErrorMessage(message: String) {
+        _errorMessage.value = message
+    }
+
 
     init {
         //Fetching profile data from repository

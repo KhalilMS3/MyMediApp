@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.twotone.AccountCircle
@@ -162,7 +164,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
-    val auth = FirebaseAuth.getInstance() //important for logout KHALIL
+    val auth = FirebaseAuth.getInstance() //important for logout KHALI
     Text(
         text = "My Medi",
         fontSize = 24.sp,
