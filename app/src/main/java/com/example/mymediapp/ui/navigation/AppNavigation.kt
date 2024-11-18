@@ -103,7 +103,7 @@ fun AppNavigation() {
                 }
             },
             floatingActionButton = {
-                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map", "profile/{userId}", "AboutUs")) {
+                if (currentRoute(navController) !in listOf("startscreen", "login", "signup", "reminder", "map", "profile/{userId}", "AboutUs", "diet")) {
                     FloatingActionButton(
                         onClick = { navController.navigate("reminder") },
                         containerColor = secondaryContainerLight) {

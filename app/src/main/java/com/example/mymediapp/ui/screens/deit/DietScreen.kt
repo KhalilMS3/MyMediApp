@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,27 +42,33 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DietScreen(navController: NavController) {
     val viewModel: DietViewModel = viewModel()
     val mealItems by viewModel.mealItems.observeAsState(emptyList())
 
+    // State variables for meal input
     var newMeal by remember { mutableStateOf("") }
     var newCalories by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf("") }
     var selectedTime by remember { mutableStateOf("") }
     var showCalendar by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }  // To display error message
+    var showErrorDialog by remember { mutableStateOf(false) } // To control the dialog visibility
 
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
+    // Column layout
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "My Diet",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
+
+        // Meal name input
         Text(text = "Meal name")
         OutlinedTextField(
             value = newMeal,
@@ -70,6 +77,8 @@ fun DietScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        // Calories input
         Text(text = "Calories (kcal)")
         OutlinedTextField(
             value = newCalories,
@@ -79,10 +88,10 @@ fun DietScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Date and Time picker
         Row(modifier = Modifier.fillMaxWidth()) {
             Column {
-                Text(text = "Date")
-                // Date Picker
+                Text(text = "Date") // Date Picker
                 OutlinedButton(
                     modifier = Modifier
                         .width(200.dp)
@@ -108,7 +117,6 @@ fun DietScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
             Column {
                 Text(text = "Time")
-                // Time Picker
                 OutlinedButton(
                     modifier = Modifier.width(200.dp),
                     shape = RoundedCornerShape(5.dp),
@@ -134,26 +142,37 @@ fun DietScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Add Meal button
         Button(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(15.dp),
             shape = RoundedCornerShape(5.dp),
             onClick = {
+                // Validate inputs
                 if (newMeal.isNotBlank() && newCalories.isNotBlank() && selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
-                    val newMealItem = MealItem(
-                        id = UUID.randomUUID().toString(),
-                        meal = newMeal,
-                        calories = newCalories.toIntOrNull() ?: 0,
-                        date = selectedDate,
-                        time = selectedTime
-                    )
-                    // Add the meal item to Firebase
-                    viewModel.addMealItem(newMealItem)
-                    // Reset the input fields
-                    newMeal = ""
-                    newCalories = ""
-                    selectedDate = ""
-                    selectedTime = ""
+                    val calories = newCalories.toIntOrNull()
+                    if (calories != null) {
+                        val newMealItem = MealItem(
+                            id = UUID.randomUUID().toString(),
+                            meal = newMeal,
+                            calories = calories,
+                            date = selectedDate,
+                            time = selectedTime
+                        )
+                        viewModel.addMealItem(newMealItem)
+                        // Reset input fields after success
+                        newMeal = ""
+                        newCalories = ""
+                        selectedDate = ""
+                        selectedTime = ""
+                        errorMessage = ""  // Clear any previous error message
+                    } else {
+                        errorMessage = "Calories should be a valid number!"
+                        showErrorDialog = true // Show dialog if calories are invalid
+                    }
+                } else {
+                    errorMessage = "Please fill all fields!"
+                    showErrorDialog = true // Show dialog if any field is empty
                 }
             }
         ) {
@@ -168,7 +187,6 @@ fun DietScreen(navController: NavController) {
             shape = RoundedCornerShape(5.dp),
             onClick = {
                 navController.navigate("calendar")
-
             }
         ) {
             Text("View Calendar")
@@ -176,6 +194,7 @@ fun DietScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Show meals list or calendar
         if (showCalendar) {
             MyCalendar().CalendarView(mealItems = mealItems)
         } else {
@@ -187,9 +206,16 @@ fun DietScreen(navController: NavController) {
                 }
             }
         }
+
+        // Error dialog
+        if (showErrorDialog) {
+            ErrorDialog(
+                message = errorMessage,
+                onDismiss = { showErrorDialog = false }
+            )
+        }
     }
 }
-
 @Composable
 fun MealItemView(meal: MealItem, onDelete: (String) -> Unit) {
     Row(
@@ -207,5 +233,18 @@ fun MealItemView(meal: MealItem, onDelete: (String) -> Unit) {
             Icon(Icons.Default.Delete, contentDescription = "Delete Meal")
         }
     }
+}
+@Composable
+fun ErrorDialog(message: String, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Error") },
+        text = { Text(text = message) },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+    )
 }
 
