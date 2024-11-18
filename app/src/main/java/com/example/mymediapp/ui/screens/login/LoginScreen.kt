@@ -101,6 +101,7 @@ fun LoginScreen(navController: NavController) {
                     .height(56.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.textFieldColors(
+                    unfocusedTextColor = Color.DarkGray,
                     containerColor = Color.White,
                     focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
@@ -127,6 +128,7 @@ fun LoginScreen(navController: NavController) {
                 visualTransformation = PasswordVisualTransformation(),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
+                    unfocusedTextColor = Color.DarkGray,
                     focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
                     unfocusedIndicatorColor = Color.Black

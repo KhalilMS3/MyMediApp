@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,9 +18,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.compose.onPrimaryDark
+import com.example.compose.onPrimaryLight
+import com.example.compose.secondaryDark
+import com.example.compose.secondaryDarkHighContrast
 import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -49,7 +56,7 @@ fun homeScreen(navController: NavController, viewModel: ReminderViewModel = view
                 }
                 .addOnFailureListener { e ->
                     Log.e("homeScreen", "Error fetching user data", e)
-                    userName = "Bruker"
+                    userName = "User"
                 }
         }
     }
@@ -63,12 +70,14 @@ fun homeScreen(navController: NavController, viewModel: ReminderViewModel = view
         item {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Hei, $userName",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 20.dp)
+                text = "Hello, $userName",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 0.dp)
             )
+            Divider(thickness = 1.dp, modifier = Modifier.padding(bottom = 20.dp).width(200.dp), color = secondaryDark)
             Text(
-                text = "Kommende medisiner",
+                text = "Upcoming medicines",
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -77,7 +86,7 @@ fun homeScreen(navController: NavController, viewModel: ReminderViewModel = view
         // Content Section
         if (reminders.isEmpty()) {
             item {
-                Text("Ingen kommende medisiner")
+                Text("No upcoming medicines..")
             }
         } else {
             items(reminders) { reminder ->
@@ -103,8 +112,39 @@ fun MedicineItem(reminder: Reminder) {
                 text = reminder.medicineName,
                 style = MaterialTheme.typography.headlineSmall
             )
+            Divider(thickness = 2.dp, color = secondaryDark)
+            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(top = 20.dp, bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ){
+
             Text(
-                text = "Neste dose: ${reminder.startTime.hours}:${reminder.startTime.minutes}",
+                text = "Next dose:",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                    text = "${reminder.startTime.hours}:${reminder.startTime.minutes}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                VerticalDivider(thickness = 2.dp, color = secondaryDark)
+            Text(
+                    text = "Dose number:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.ExtraBold
+
+                )
+                Text(
+                    text = "${reminder.numberOfDoses}",
+                    style = MaterialTheme.typography.bodyMedium
+
+                )
+            }
+            Text(
+                text = "Notes:",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                text = "${reminder.notes}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

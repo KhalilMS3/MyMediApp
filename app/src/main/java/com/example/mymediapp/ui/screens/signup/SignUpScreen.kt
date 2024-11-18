@@ -85,6 +85,8 @@ fun SignUpScreen(navController: NavController) {
                     shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.White,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedTextColor = Color.Black,
                         focusedIndicatorColor = primaryLight,
                         unfocusedIndicatorColor = Color.Gray
                     )
@@ -101,6 +103,8 @@ fun SignUpScreen(navController: NavController) {
                     shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.White,
+                        unfocusedTextColor = Color.DarkGray,
+                        focusedTextColor = Color.Black,
                         focusedIndicatorColor = primaryLight,
                         unfocusedIndicatorColor = Color.Gray
                     )
@@ -120,6 +124,8 @@ fun SignUpScreen(navController: NavController) {
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
+                    unfocusedTextColor = Color.DarkGray,
+                    focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
                     unfocusedIndicatorColor = Color.Gray
                 )
@@ -139,6 +145,8 @@ fun SignUpScreen(navController: NavController) {
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
+                    unfocusedTextColor = Color.DarkGray,
+                    focusedTextColor = Color.Black,
                     focusedIndicatorColor = primaryLight,
                     unfocusedIndicatorColor = Color.Gray
                 )

@@ -82,7 +82,7 @@ fun AppNavigation() {
                 DrawerContent(navController = navController, drawerState = drawerState)
             }
         },
-        gesturesEnabled = false
+        gesturesEnabled = true
 
     ) {
         Scaffold(

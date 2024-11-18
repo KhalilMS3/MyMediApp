@@ -6,13 +6,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.compose.backgroundLight
+import com.example.compose.onPrimaryDark
+import com.example.compose.primaryDark
+import com.example.compose.primaryLight
+import com.example.compose.secondaryDark
 import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.model.Time
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
@@ -33,8 +45,10 @@ fun myMedicationsScreen(navController: NavController, viewModel: ReminderViewMod
             .padding(16.dp)
             //.verticalScroll(rememberScrollState())
     ) {
-        Text(text = "My Medications", modifier = Modifier.padding(bottom = 8.dp))
-
+        Text(text = "My Medications",
+            style = MaterialTheme.typography.displaySmall
+                    ,modifier = Modifier.padding(bottom = 8.dp))
+        Divider(thickness = 2.dp, modifier = Modifier.padding(top = 5.dp, bottom = 20.dp), color = secondaryDark)
         // Display the list of reminders using LazyColumn
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(reminders.value) { reminder ->
@@ -46,10 +60,53 @@ fun myMedicationsScreen(navController: NavController, viewModel: ReminderViewMod
 
 @Composable
 fun ReminderItem(reminder: Reminder) {
-    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-        Text(text = "Medicine: ${reminder.medicineName}")
-        Text(text = "Start Date: ${reminder.startDate}")
-        Text(text = "Time: ${reminder.startTime.hours}:${reminder.startTime.minutes}")
-        Spacer(modifier = Modifier.height(8.dp))
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = reminder.medicineName,
+                style = MaterialTheme.typography.headlineSmall
+
+            )
+
+            Divider(thickness = 2.dp, color = secondaryDark, modifier = Modifier.padding(top = 10.dp))
+            Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)
+                .padding(top = 10.dp, bottom = 10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)){
+
+                Text(
+                    text = "Start time:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    text = "${reminder.startTime.hours}:${reminder.startTime.minutes}",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                VerticalDivider(thickness = 2.dp, color = secondaryDark)
+                Text(
+                    text = "Number of doses:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold
+
+                )
+                Text(
+                    text = "${reminder.numberOfDoses}",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            Text(
+                text = "Notes:",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                text = "${reminder.notes}",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
     }
 }
