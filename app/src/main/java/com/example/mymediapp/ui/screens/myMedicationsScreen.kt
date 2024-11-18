@@ -39,21 +39,29 @@ fun myMedicationsScreen(navController: NavController, viewModel: ReminderViewMod
     val medicines = viewModel.medicineResults.observeAsState(initial = emptyList()).value
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            //.verticalScroll(rememberScrollState())
     ) {
-        Text(text = "My Medications",
-            style = MaterialTheme.typography.displaySmall
-                    ,modifier = Modifier.padding(bottom = 8.dp))
-        Divider(thickness = 2.dp, modifier = Modifier.padding(top = 5.dp, bottom = 20.dp), color = secondaryDark)
-        // Display the list of reminders using LazyColumn
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(reminders.value) { reminder ->
-                ReminderItem(reminder = reminder)
-            }
+        // Header Section
+        item {
+            Text(
+                text = "My Medications",
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Divider(
+                thickness = 2.dp,
+                modifier = Modifier
+                    .padding(top = 5.dp, bottom = 20.dp),
+                color = secondaryDark
+            )
+        }
+
+        // List of Reminders
+        items(reminders.value) { reminder ->
+            ReminderItem(reminder = reminder)
         }
     }
 }

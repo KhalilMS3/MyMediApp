@@ -26,6 +26,8 @@ import com.example.compose.secondaryContainerLight
 import com.example.mymediapp.R
 import com.example.mymediapp.factory.SignUpViewModelFactory
 import com.example.mymediapp.repository.UserRepository
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +53,7 @@ fun SignUpScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
