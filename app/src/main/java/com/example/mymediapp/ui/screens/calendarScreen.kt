@@ -16,8 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.deit.DietViewModel
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+
 
 
 @Composable
@@ -25,7 +24,7 @@ fun CalendarScreen(navController: NavController) {
     val viewModel: DietViewModel = viewModel()
     val mealItems by viewModel.mealItems.observeAsState(emptyList())
 
-    Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())
+    Column(modifier = Modifier.padding(16.dp)
     ) {
         Text(
             text = "Calendar",

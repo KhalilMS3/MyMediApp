@@ -139,7 +139,7 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
             Column(modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                //.verticalScroll(rememberScrollState())
                 .padding(16.dp)) {
 
                 // Search Field
