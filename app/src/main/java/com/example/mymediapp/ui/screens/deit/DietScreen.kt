@@ -42,7 +42,6 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DietScreen(navController: NavController) {
     val viewModel: DietViewModel = viewModel()
@@ -60,159 +59,165 @@ fun DietScreen(navController: NavController) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
-    // Column layout
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = "My Diet",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+    LazyColumn(
+        modifier = Modifier.padding(16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp)
+    ) {
+        item {
+            Text(
+                text = "My Diet",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
 
-        // Meal name input
-        Text(text = "Meal name")
-        OutlinedTextField(
-            value = newMeal,
-            onValueChange = { newMeal = it },
-            modifier = Modifier.fillMaxWidth()
-        )
+            // Meal name input
+            Text(text = "Meal name")
+            OutlinedTextField(
+                value = newMeal,
+                onValueChange = { newMeal = it },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-        // Calories input
-        Text(text = "Calories (kcal)")
-        OutlinedTextField(
-            value = newCalories,
-            onValueChange = { newCalories = it },
-            modifier = Modifier.fillMaxWidth()
-        )
+            // Calories input
+            Text(text = "Calories (kcal)")
+            OutlinedTextField(
+                value = newCalories,
+                onValueChange = { newCalories = it },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Date and Time picker
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Column {
-                Text(text = "Date") // Date Picker
-                OutlinedButton(
-                    modifier = Modifier
-                        .width(200.dp)
-                        .padding(end = 10.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    onClick = {
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, dayOfMonth ->
-                                calendar.set(year, month, dayOfMonth)
-                                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                                selectedDate = dateFormat.format(calendar.time)
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH)
-                        ).show()
-                    }
-                ) {
-                    Text(if (selectedDate.isEmpty()) "Pick Date" else selectedDate)
-                }
-            }
             Spacer(modifier = Modifier.height(8.dp))
-            Column {
-                Text(text = "Time")
-                OutlinedButton(
-                    modifier = Modifier.width(200.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    onClick = {
-                        TimePickerDialog(
-                            context,
-                            { _, hour, minute ->
-                                calendar.set(Calendar.HOUR_OF_DAY, hour)
-                                calendar.set(Calendar.MINUTE, minute)
-                                val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-                                selectedTime = timeFormat.format(calendar.time)
-                            },
-                            calendar.get(Calendar.HOUR_OF_DAY),
-                            calendar.get(Calendar.MINUTE),
-                            true
-                        ).show()
+
+            // Date and Time picker
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    Text(text = "Date") // Date Picker
+                    OutlinedButton(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(end = 10.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            DatePickerDialog(
+                                context,
+                                { _, year, month, dayOfMonth ->
+                                    calendar.set(year, month, dayOfMonth)
+                                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                    selectedDate = dateFormat.format(calendar.time)
+                                },
+                                calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH)
+                            ).show()
+                        }
+                    ) {
+                        Text(if (selectedDate.isEmpty()) "Pick Date" else selectedDate)
                     }
-                ) {
-                    Text(if (selectedTime.isEmpty()) "Pick Time" else selectedTime)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Column {
+                    Text(text = "Time")
+                    OutlinedButton(
+                        modifier = Modifier.width(200.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            TimePickerDialog(
+                                context,
+                                { _, hour, minute ->
+                                    calendar.set(Calendar.HOUR_OF_DAY, hour)
+                                    calendar.set(Calendar.MINUTE, minute)
+                                    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                                    selectedTime = timeFormat.format(calendar.time)
+                                },
+                                calendar.get(Calendar.HOUR_OF_DAY),
+                                calendar.get(Calendar.MINUTE),
+                                true
+                            ).show()
+                        }
+                    ) {
+                        Text(if (selectedTime.isEmpty()) "Pick Time" else selectedTime)
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Add Meal button
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(15.dp),
-            shape = RoundedCornerShape(5.dp),
-            onClick = {
-                // Validate inputs
-                if (newMeal.isNotBlank() && newCalories.isNotBlank() && selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
-                    val calories = newCalories.toIntOrNull()
-                    if (calories != null) {
-                        val newMealItem = MealItem(
-                            id = UUID.randomUUID().toString(),
-                            meal = newMeal,
-                            calories = calories,
-                            date = selectedDate,
-                            time = selectedTime
-                        )
-                        viewModel.addMealItem(newMealItem)
-                        // Reset input fields after success
-                        newMeal = ""
-                        newCalories = ""
-                        selectedDate = ""
-                        selectedTime = ""
-                        errorMessage = ""  // Clear any previous error message
+            // Add Meal button
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(15.dp),
+                shape = RoundedCornerShape(5.dp),
+                onClick = {
+                    // Validate inputs
+                    if (newMeal.isNotBlank() && newCalories.isNotBlank() && selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
+                        val calories = newCalories.toIntOrNull()
+                        if (calories != null) {
+                            val newMealItem = MealItem(
+                                id = UUID.randomUUID().toString(),
+                                meal = newMeal,
+                                calories = calories,
+                                date = selectedDate,
+                                time = selectedTime
+                            )
+                            viewModel.addMealItem(newMealItem)
+                            // Reset input fields after success
+                            newMeal = ""
+                            newCalories = ""
+                            selectedDate = ""
+                            selectedTime = ""
+                            errorMessage = ""  // Clear any previous error message
+                        } else {
+                            errorMessage = "Calories should be a valid number!"
+                            showErrorDialog = true // Show dialog if calories are invalid
+                        }
                     } else {
-                        errorMessage = "Calories should be a valid number!"
-                        showErrorDialog = true // Show dialog if calories are invalid
+                        errorMessage = "Please fill all fields!"
+                        showErrorDialog = true // Show dialog if any field is empty
                     }
-                } else {
-                    errorMessage = "Please fill all fields!"
-                    showErrorDialog = true // Show dialog if any field is empty
                 }
+            ) {
+                Text("Add Meal")
             }
-        ) {
-            Text("Add Meal")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Button to navigate to Calendar Screen
+            Button(
+                contentPadding = PaddingValues(15.dp),
+                shape = RoundedCornerShape(5.dp),
+                onClick = {
+                    navController.navigate("calendar")
+                }
+            ) {
+                Text("View Calendar")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to navigate to Calendar Screen
-        Button(
-            contentPadding = PaddingValues(15.dp),
-            shape = RoundedCornerShape(5.dp),
-            onClick = {
-                navController.navigate("calendar")
-            }
-        ) {
-            Text("View Calendar")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Show meals list or calendar
+        // Display meals or calendar
         if (showCalendar) {
-            MyCalendar().CalendarView(mealItems = mealItems)
+            item {
+                MyCalendar().CalendarView(mealItems = mealItems)
+            }
         } else {
-            LazyColumn {
-                items(mealItems) { meal ->
-                    MealItemView(meal, onDelete = { mealId ->
-                        viewModel.deleteMealItem(mealId)
-                    })
-                }
+            items(mealItems) { meal ->
+                MealItemView(meal, onDelete = { mealId ->
+                    viewModel.deleteMealItem(mealId)
+                })
             }
         }
 
         // Error dialog
         if (showErrorDialog) {
-            ErrorDialog(
-                message = errorMessage,
-                onDismiss = { showErrorDialog = false }
-            )
+            item {
+                ErrorDialog(
+                    message = errorMessage,
+                    onDismiss = { showErrorDialog = false }
+                )
+            }
         }
     }
 }

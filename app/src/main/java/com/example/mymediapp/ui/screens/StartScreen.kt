@@ -18,12 +18,15 @@ import com.example.compose.inversePrimaryLight
 import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
 import com.example.compose.secondaryLight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun StartScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

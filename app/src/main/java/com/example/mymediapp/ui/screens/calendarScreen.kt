@@ -17,15 +17,20 @@ import androidx.navigation.NavController
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.deit.DietViewModel
 
+
+
 @Composable
 fun CalendarScreen(navController: NavController) {
     val viewModel: DietViewModel = viewModel()
     val mealItems by viewModel.mealItems.observeAsState(emptyList())
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.padding(16.dp)
+    ) {
         Text(
             text = "Calendar",
+
             style = MaterialTheme.typography.headlineMedium,
+
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
