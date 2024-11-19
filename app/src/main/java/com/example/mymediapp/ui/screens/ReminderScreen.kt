@@ -205,24 +205,6 @@ fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = 
                                 Icon(Icons.TwoTone.Numbers, contentDescription = "Number of doses")
                             }
                         )
-                        Text("Doses per day", fontSize = 16.sp)
-                        OutlinedTextField(
-                            value = numberOfDoses,
-                            onValueChange = { numberOfDoses = it },
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                            leadingIcon = {
-                                Icon(Icons.TwoTone.Numbers, contentDescription = "Number of doses")
-                            }
-                        )
-                        Text("Doses per day", fontSize = 16.sp)
-                        OutlinedTextField(
-                            value = numberOfDoses,
-                            onValueChange = { numberOfDoses = it },
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                            leadingIcon = {
-                                Icon(Icons.TwoTone.Numbers, contentDescription = "Number of doses")
-                            }
-                        )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
