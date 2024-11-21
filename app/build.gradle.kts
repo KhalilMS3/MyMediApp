@@ -115,4 +115,11 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.0.5")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Unit testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation ("io.mockk:mockk:1.13.5")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0") // For LiveData and ViewModel testing
+
+
 }

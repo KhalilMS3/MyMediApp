@@ -22,16 +22,25 @@ import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
 import com.example.mymediapp.R
 import com.example.mymediapp.factory.LoginViewModelFactory
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
+import android.content.Context
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
-    //State from ViewModel using the factory
+
+    // Obtain instances of FirebaseAuth and SharedPreferences
+    val auth = remember { FirebaseAuth.getInstance() }
+    val sharedPreferences = remember {
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    }
+
+    // Instantiate the ViewModel using the updated factory
     val loginViewModel: LoginViewModel = viewModel(
-        factory = LoginViewModelFactory(context)
+        factory = LoginViewModelFactory(auth, sharedPreferences)
     )
     //State from ViewModel using in the UI
     val email by loginViewModel.email.collectAsState()

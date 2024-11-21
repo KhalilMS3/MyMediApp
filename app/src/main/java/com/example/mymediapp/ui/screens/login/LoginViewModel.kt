@@ -1,20 +1,21 @@
 package com.example.mymediapp.ui.screens.login
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import android.content.SharedPreferences
 
-class LoginViewModel(context: Context) : ViewModel() {
+class LoginViewModel(
     //Firebase auth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth,
     //SharedPreferences to store user for login data
-    private val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
 
-    //MutableStateFlows for hold email, password and the remember me state
+    // MutableStateFlows to hold email, password, and remember me state
     var email = MutableStateFlow(sharedPreferences.getString("email", "") ?: "")
     var password = MutableStateFlow(sharedPreferences.getString("password", "") ?: "")
     var rememberMe = MutableStateFlow(sharedPreferences.getBoolean("rememberMe", false))
