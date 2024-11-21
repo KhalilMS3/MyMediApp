@@ -6,6 +6,7 @@ import com.example.mymediapp.ui.screens.deit.DietViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 class DietViewModelFactory(
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth

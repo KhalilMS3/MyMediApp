@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mymediapp.factory.DietViewModelFactory
 import com.example.mymediapp.model.MealItem
 import com.example.mymediapp.model.MyCalendar
 import java.text.SimpleDateFormat
@@ -43,8 +44,8 @@ import java.util.Locale
 import java.util.UUID
 
 @Composable
-fun DietScreen(navController: NavController) {
-    val viewModel: DietViewModel = viewModel()
+fun DietScreen(navController: NavController, factory: DietViewModelFactory) {
+    val viewModel: DietViewModel = viewModel(factory = factory)
     val mealItems by viewModel.mealItems.observeAsState(emptyList())
 
     // State variables for meal input

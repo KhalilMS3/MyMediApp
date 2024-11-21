@@ -53,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.secondaryContainerLight
 import com.example.compose.secondaryLight
 import com.example.compose.tertiaryContainerLight
+import com.example.mymediapp.factory.DietViewModelFactory
 import com.example.mymediapp.ui.screens.AboutUsScreen
 import com.example.mymediapp.ui.screens.CalendarScreen
 import com.example.mymediapp.ui.screens.MapScreenContent
@@ -66,6 +67,7 @@ import com.example.mymediapp.ui.screens.settings.SettingsScreen
 import com.example.mymediapp.ui.screens.signup.SignUpScreen
 import com.example.mymediapp.ui.screens.userProfile.UserProfileScreen
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -74,6 +76,9 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val db = FirebaseFirestore.getInstance()
+    val auth = FirebaseAuth.getInstance()
+    val dietViewModelFactory = DietViewModelFactory(db, auth)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -122,8 +127,8 @@ fun AppNavigation() {
                 composable("home") { homeScreen(navController) }
                 composable("reminder") { ReminderScreen(navController) }
                 composable("medications") { myMedicationsScreen(navController) }
-                composable("diet") { DietScreen(navController) }
-                composable("calendar") { CalendarScreen(navController) }
+                composable("diet") { DietScreen(navController, factory = dietViewModelFactory) }
+                composable("calendar") { CalendarScreen(navController, factory = dietViewModelFactory) }
                 composable("settings") { SettingsScreen(navController) }
                 composable("profile/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId") ?: ""

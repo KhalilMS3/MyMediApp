@@ -14,15 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.mymediapp.factory.DietViewModelFactory
 import com.example.mymediapp.model.MyCalendar
 import com.example.mymediapp.ui.screens.deit.DietViewModel
 
 
 
 @Composable
-fun CalendarScreen(navController: NavController) {
-    val viewModel: DietViewModel = viewModel()
+fun CalendarScreen(navController: NavController, factory: DietViewModelFactory) {
+    val viewModel: DietViewModel = viewModel(factory = factory)
     val mealItems by viewModel.mealItems.observeAsState(emptyList())
+
 
     Column(modifier = Modifier.padding(16.dp)
     ) {
