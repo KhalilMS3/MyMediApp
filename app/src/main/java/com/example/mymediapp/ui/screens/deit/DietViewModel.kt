@@ -9,10 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-class DietViewModel : ViewModel() {
+class DietViewModel(private val db: FirebaseFirestore, private val auth: FirebaseAuth) : ViewModel(){
 
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+
     private val _mealItems = MutableLiveData<List<MealItem>>(emptyList())
     val mealItems: LiveData<List<MealItem>> get() = _mealItems
 
@@ -28,7 +27,7 @@ class DietViewModel : ViewModel() {
     }
 
     private fun getUserId(): String {
-        return FirebaseAuth.getInstance().currentUser?.uid ?: run {
+        return auth.currentUser?.uid ?: run {
             Log.e("DietViewModel", "User ID is null. Using defaultUserId.")
             "defaultUserId"
         }
