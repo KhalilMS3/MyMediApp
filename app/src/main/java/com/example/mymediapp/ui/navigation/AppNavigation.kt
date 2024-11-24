@@ -69,6 +69,10 @@ import com.example.mymediapp.ui.screens.userProfile.UserProfileScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import android.app.AlarmManager
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import com.example.mymediapp.factory.ReminderViewModelFactory
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -125,7 +129,17 @@ fun AppNavigation() {
                 composable("login") { LoginScreen(navController) }
                 composable("signup") { SignUpScreen(navController) }
                 composable("home") { homeScreen(navController) }
-                composable("reminder") { ReminderScreen(navController) }
+                composable("reminder") {
+                    // Obtain the Context and AlarmManager
+                    val context = LocalContext.current
+                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+                    // Create ReminderViewModelFactory
+                    val reminderViewModelFactory = ReminderViewModelFactory(context, auth, db, alarmManager)
+
+                    // Pass the factory to ReminderScreen
+                    ReminderScreen(navController, factory = reminderViewModelFactory)
+                }
                 composable("medications") { myMedicationsScreen(navController) }
                 composable("diet") { DietScreen(navController, factory = dietViewModelFactory) }
                 composable("calendar") { CalendarScreen(navController, factory = dietViewModelFactory) }

@@ -31,9 +31,29 @@ import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.app.AlarmManager
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import com.example.mymediapp.factory.ReminderViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun myMedicationsScreen(navController: NavController, viewModel: ReminderViewModel = viewModel()) {
+fun myMedicationsScreen(navController: NavController) {
+    // Obtain the Context and AlarmManager
+    val context = LocalContext.current
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    // Initialize Firebase instances
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
+    // Create ReminderViewModelFactory
+    val reminderViewModelFactory = ReminderViewModelFactory(context, auth, db, alarmManager)
+
+    // Instantiate ReminderViewModel using the factory
+    val viewModel: ReminderViewModel = viewModel(factory = reminderViewModelFactory)
+
     // Observe the list of reminders from the ViewModel
     val reminders = viewModel.reminders.observeAsState(listOf())
     val medicines = viewModel.medicineResults.observeAsState(initial = emptyList()).value

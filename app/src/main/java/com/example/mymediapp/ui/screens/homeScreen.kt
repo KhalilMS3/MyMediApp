@@ -30,16 +30,31 @@ import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
+import android.app.AlarmManager
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
+import com.example.mymediapp.factory.ReminderViewModelFactory
 
 @Composable
-fun homeScreen(navController: NavController, viewModel: ReminderViewModel = viewModel()) {
+fun homeScreen(navController: NavController) {
+    // Obtain the Context and AlarmManager
+    val context = LocalContext.current
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    // Initialize Firebase instances
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
+    // Create ReminderViewModelFactory
+    val reminderViewModelFactory = ReminderViewModelFactory(context, auth, db, alarmManager)
+
+    // Instantiate ReminderViewModel using the factory
+    val viewModel: ReminderViewModel = viewModel(factory = reminderViewModelFactory)
 
     // Fetching reminders list from viewModel
     val reminders by viewModel.reminders.observeAsState(emptyList())
     // Firebase auth and firestore
-    val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+
     var userName by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {

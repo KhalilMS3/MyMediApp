@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.compose.errorContainerLightMediumContrast
@@ -67,9 +68,16 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel = viewModel()) {
+fun ReminderScreen(
+    navController: NavController,
+    factory: ViewModelProvider.Factory
+) {
+    // Create the ViewModel using the provided factory
+    val viewModel: ReminderViewModel = viewModel(factory = factory)
+
     var searchText by remember { mutableStateOf("") }
     var numberOfDoses by remember { mutableStateOf("") }
     val medicines by viewModel.medicineResults.observeAsState(initial = emptyList())

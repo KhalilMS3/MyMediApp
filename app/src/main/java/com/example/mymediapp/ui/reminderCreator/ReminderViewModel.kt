@@ -28,13 +28,14 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 
-class ReminderViewModel(application: Application) : AndroidViewModel(application) {
-    private val context = getApplication<Application>().applicationContext
-    // Initialize FirebaseAuth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+class ReminderViewModel(
+    private val context: Context,
+    private val auth: FirebaseAuth,
+    private val db: FirebaseFirestore,
+    private val alarmManager: AlarmManager,
 
-    // Firestore instance
-    private val db = FirebaseFirestore.getInstance()
+) : ViewModel() {
+
 
     // LiveData for medicine search results
     private val _medicineResults = MutableLiveData<List<MedicineResponse>>()
@@ -109,7 +110,7 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
         _medications.value = updatedList
     }
 
-    private fun saveReminderToFirestore(reminder: Reminder) {
+    fun saveReminderToFirestore(reminder: Reminder) {
         val userId = auth.currentUser?.uid
 
         if (userId != null) {
