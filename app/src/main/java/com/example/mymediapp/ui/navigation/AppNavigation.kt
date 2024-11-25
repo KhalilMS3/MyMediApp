@@ -71,6 +71,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import android.app.AlarmManager
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.twotone.Close
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.example.mymediapp.factory.ReminderViewModelFactory
 
@@ -91,7 +99,7 @@ fun AppNavigation() {
                 DrawerContent(navController = navController, drawerState = drawerState)
             }
         },
-        gesturesEnabled = true
+        gesturesEnabled = false
 
     ) {
         Scaffold(
@@ -183,14 +191,42 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifier, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
-    val auth = FirebaseAuth.getInstance() //important for logout KHALI
-    Text(
-        text = "My Medi",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.ExtraBold,
-        modifier = Modifier.padding(16.dp)
-    )
-    HorizontalDivider()
+    val auth = FirebaseAuth.getInstance() //important for logout
+    Column(modifier = Modifier.verticalScroll((rememberScrollState()))) {
+
+       Row (
+           modifier = Modifier
+               .fillMaxWidth()
+               .padding(10.dp),
+           horizontalArrangement = Arrangement.SpaceBetween,
+           verticalAlignment = Alignment.CenterVertically
+       ){ Text(
+               text = "My Medi",
+               fontSize = 24.sp,
+               fontWeight = FontWeight.ExtraBold,
+               modifier = Modifier.padding(5.dp)
+       )
+        IconButton(
+
+            onClick = {
+                scope.launch {
+                    drawerState.close()
+                }
+            },
+            modifier = Modifier.padding((5.dp))
+        ) {
+            Icon(
+                imageVector = Icons.TwoTone.Close,
+                contentDescription = "Close Drawer",
+                modifier = Modifier.size(40.dp)
+
+            )
+
+        }
+       }
+
+
+        HorizontalDivider()
     Spacer(modifier = Modifier.height(8.dp))
     NavigationDrawerItem(
         icon = {
@@ -345,7 +381,7 @@ fun DrawerContent(navController: NavHostController, modifier: Modifier = Modifie
             }
         }
     )
-}
+}}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
