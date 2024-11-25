@@ -32,13 +32,11 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.mymediapp.factory.UserProfileViewModelFactory
 import com.example.mymediapp.repository.UserProfileRepository
-import com.example.mymediapp.ui.screens.userProfile.UserProfileViewModel
 import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 

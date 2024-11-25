@@ -4,8 +4,7 @@ package com.example.mymediapp.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+
 import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -15,21 +14,15 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.compose.backgroundLight
-import com.example.compose.onPrimaryDark
-import com.example.compose.primaryDark
-import com.example.compose.primaryLight
+
 import com.example.compose.secondaryDark
 import com.example.mymediapp.model.Reminder
-import com.example.mymediapp.model.Time
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import android.app.AlarmManager
 import android.content.Context

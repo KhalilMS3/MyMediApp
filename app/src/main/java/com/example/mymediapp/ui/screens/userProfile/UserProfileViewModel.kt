@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.mymediapp.repository.UserProfileRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.StateFlow
 
 class UserProfileViewModel(private val userRepository: UserProfileRepository) : ViewModel() {
     // MutableStateFlows for hold user data and other UI
