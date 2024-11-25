@@ -119,7 +119,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
     testImplementation ("io.mockk:mockk:1.13.5")
-    testImplementation ("androidx.arch.core:core-testing:2.2.0") // For LiveData and ViewModel testing
+    // For LiveData and ViewModel testing
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
     testImplementation ("org.robolectric:robolectric:4.7.3")
 
 

@@ -22,10 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.compose.onPrimaryDark
-import com.example.compose.onPrimaryLight
 import com.example.compose.secondaryDark
-import com.example.compose.secondaryDarkHighContrast
 import com.example.mymediapp.model.Reminder
 import com.example.mymediapp.ui.reminderCreator.ReminderViewModel
 import com.google.firebase.auth.FirebaseAuth

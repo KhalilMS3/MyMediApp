@@ -8,7 +8,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mymediapp.preferences.LocalUserPreferences
-import com.example.mymediapp.ui.screens.settings.SettingsViewModel
 
 @Composable
 fun SettingsScreen(navController: NavController) {

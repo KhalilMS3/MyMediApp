@@ -14,10 +14,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.compose.inversePrimaryLight
+
 import com.example.compose.primaryLight
 import com.example.compose.secondaryContainerLight
-import com.example.compose.secondaryLight
+
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
