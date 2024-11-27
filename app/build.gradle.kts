@@ -7,7 +7,7 @@ plugins {
 android {
     signingConfigs {
         getByName("debug") {
-            storeFile = file("C:\\Mobilprogrammering\\Upload-Keystore.jks")
+            storeFile = file("C:\\Mobilprogrammering\\FAINAL\\MyMediApp\\app\\Upload-Keystore.jks")
             storePassword = "Team 17"
             keyAlias = "Team 17"
             keyPassword = "Team 17"
