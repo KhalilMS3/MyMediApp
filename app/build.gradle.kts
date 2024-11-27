@@ -5,6 +5,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("C:\\Mobilprogrammering\\Upload-Keystore.jks")
+            storePassword = "Team 17"
+            keyAlias = "Team 17"
+            keyPassword = "Team 17"
+        }
+    }
     namespace = "com.example.mymediapp"
     compileSdk = 34
 
